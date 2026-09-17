@@ -1,4 +1,4 @@
-# LLM From Scratch to Agent
+# From Token to Agent
 
 > **One repo. One ladder. 16 weeks. From raw text to a self-improving agent.**
 

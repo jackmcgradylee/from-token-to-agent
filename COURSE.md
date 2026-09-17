@@ -1,5 +1,17 @@
 # Course Schedule & Conventions
 
+## Repo name — why `from-token-to-agent`
+
+The GitHub repo name and the local directory name diverge:
+- **GitHub repo:** `from-token-to-agent` (the slogan — what this repo *is about*)
+- **Local directory:** `llm-from-scratch-to-agent/` (the method — what you *do*)
+
+Don't be confused; the directory name tracks the implementation discipline
+("write everything from scratch"), the repo name tracks the destination
+("a self-improving agent").
+
+---
+
 ## 16-Week Schedule
 
 | Week | Deliverable | Tag |
