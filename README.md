@@ -1,6 +1,6 @@
 # From Token to Agent
 
-> **One repo. One ladder. 16 weeks. From raw text to a self-improving agent.**
+> **From raw text to autonomous agents — building the modern LLM stack from scratch: tokenization, training, systems, scaling, post-training, RLVR, harnesses, and agents.**
 
 This repository is a single, continuously growing LLM research codebase. Every assignment builds on the previous one's output. The 5 formal assignments form the spine; everything else hangs off as numbered extensions.
 
