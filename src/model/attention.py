@@ -1,20 +1,23 @@
 """Grouped Query Attention (GQA, Ainslie et al. 2023) with KV cache support.
 
-For HW1 we use PyTorch SDPA as the attention backend. HW2 will swap this
-file with a Triton implementation in src/kernels/ -- the *interface* stays
-the same: forward(x, cos, sin, mask_or_kv_cache) -> y.
+For HW1 we use PyTorch SDPA as the attention backend. HW2 adds a Triton
+implementation selectable via `attn_backend` config. The forward interface
+is the same: forward(x, cos, sin, mask_or_kv_cache) -> y.
 
 Key feature: KV cache. During inference we don't want to recompute K, V for
 already-seen tokens. KVCache stores (K, V) per layer and is appended each
 forward.
+
+The actual attention math (QK^T -> softmax -> @V) is delegated to
+`src.kernels.interface.call(...)`, which dispatches by backend name.
 """
 
 from __future__ import annotations
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
+from ..kernels import interface as attn_iface
 from .rope import apply_rope
 
 
@@ -89,6 +92,22 @@ class Attention(nn.Module):
         self.o_proj = nn.Linear(n_heads * head_dim, d_model, bias=False)
 
         self.dropout = dropout
+        # Backend name; defaults to "pytorch". Switch to "triton" via config.
+        self.attn_backend: str = "pytorch"
+
+    def set_backend(self, backend: str) -> None:
+        """Switch attention backend. Logs if the requested backend is unavailable."""
+        info = attn_iface.get_backend(backend)
+        if info.available:
+            self.attn_backend = backend
+        else:
+            # Auto-fallback to a working alternative.
+            fallback = "reference" if backend == "triton" else "pytorch"
+            self.attn_backend = fallback
+            print(
+                f"[attention] backend {backend!r} unavailable "
+                f"({info.reason}); falling back to {fallback!r}"
+            )
 
     def forward(
         self,
@@ -128,18 +147,24 @@ class Attention(nn.Module):
         else:
             attn_mask = None  # SDPA with is_causal=True is more efficient
 
-        # Repeat KV heads to match Q heads (GQA expansion).
+        # Repeat KV heads to match Q heads (GQA expansion) for the math layer.
         if self.n_rep > 1:
-            k = k.repeat_interleave(self.n_rep, dim=1)
-            v = v.repeat_interleave(self.n_rep, dim=1)
+            k_for_math = k.repeat_interleave(self.n_rep, dim=1)
+            v_for_math = v.repeat_interleave(self.n_rep, dim=1)
+        else:
+            k_for_math = k
+            v_for_math = v
 
-        # PyTorch SDPA. On bf16/fp16 with causal mask, this uses Flash-Attention
-        # internally when possible.
-        y = F.scaled_dot_product_attention(
-            q, k, v,
-            attn_mask=attn_mask,
+        # Dispatch to backend. The math layer receives already-expanded K, V,
+        # so n_rep=1 from here on; the backend never sees GQA.
+        y = attn_iface.call(
+            self.attn_backend,
+            q, k_for_math, v_for_math,
             is_causal=is_causal if kv_cache is None else False,
-            dropout_p=self.dropout if self.training else 0.0,
+            softmax_scale=None,
+            n_rep=1,
+            training=self.training,
+            dropout_p=self.dropout,
         )
 
         # Reshape back: (B, H, T, D) -> (B, T, H, D) -> (B, T, H*D)

@@ -1,0 +1,44 @@
+# HW1 ext: RoPE (ablation without it)
+# HW2 baseline-100m config with PyTorch SDPA backend — this is what HW1 used.
+
+model:
+  vocab_size: 8192
+  d_model: 768
+  n_layers: 12
+  n_heads: 12
+  n_kv_heads: 4
+  d_ff: 2048
+  max_seq_len: 1024
+  rope_theta: 10000.0
+  dropout: 0.0
+  init_std: 0.02
+  tie_word_embeddings: true
+  attn_backend: pytorch
+
+tokenizer:
+  vocab_size: 8192
+  min_pair_freq: 2
+
+data:
+  path: data/raw/sample.txt
+
+training:
+  lr: 3.0e-4
+  min_lr_ratio: 0.1
+  warmup_steps: 2000
+  weight_decay: 0.1
+  grad_clip: 1.0
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1.0e-8
+  batch_size: 8
+  grad_accum: 4
+  max_steps: 15000
+  log_every: 50
+  eval_every: 500
+  val_size: 50000
+  precision: bf16
+  seed: 42
+
+ckpt_dir: checkpoints/hw2/baseline-100m-pytorch
+log_csv: loss_curve.csv

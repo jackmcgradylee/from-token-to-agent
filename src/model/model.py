@@ -31,6 +31,7 @@ class TransformerConfig:
     norm_eps: float = 1e-6
     init_std: float = 0.02
     tie_word_embeddings: bool = True
+    attn_backend: str = "pytorch"  # "pytorch" | "triton" | "reference"
 
 
 class TransformerBlock(nn.Module):
@@ -94,6 +95,13 @@ class TransformerLM(nn.Module):
 
         # Initialize weights.
         self.apply(self._init_weights)
+        # Apply backend selection from config.
+        self.set_attn_backend(cfg.attn_backend)
+
+    def set_attn_backend(self, backend: str) -> None:
+        """Switch all attention layers to a new backend."""
+        for block in self.blocks:
+            block.attn.set_backend(backend)
 
     def _init_weights(self, module: nn.Module):
         # Truncated normal with std init_std for Linear and Embedding weights.
