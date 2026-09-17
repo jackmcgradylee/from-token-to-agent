@@ -4,7 +4,7 @@
 
 > 🌐 **Languages**: [English](./README.md) · [简体中文](./README.zh-CN.md)
 
-This repository is a single, continuously growing LLM research codebase. Every assignment builds on the previous one's output. The 5 formal assignments form the spine; everything else hangs off as numbered extensions.
+> 📌 **Course origin (read this first)**: This repo is the **course project for the 5-stage "LLM ladder" assignment** that **Prof. Jie Tang (唐杰)** formally assigned today — **2026-09-17, Tsinghua "Advanced Machine Learning"**. See [Course origin](#course-origin--2026-09-17-tsinghua) below for the full context, the PPT, and what the assignment grades on.
 
 ```
 Raw Data
@@ -146,8 +146,45 @@ See `assignments/hw1-foundations/README.md` for the full reproduction recipe.
 
 ---
 
-## Course origin & acknowledgements
+## Course origin — 2026-09-17, Tsinghua
 
-The "ladder" structure, the 5-assignment spine, the **Problem → Motivation → Method → Results → Reproduction** research template, the *"A Ladder That Climbs the Course"* framing on the PPT footer, and the "code accumulates, never duplicates" discipline are direct extensions of a course assignment by **Prof. Jie Tang (唐杰)** and team. Every choice here — keep HW1–3 small, push the research payoff to HW4 and beyond, force extensions to share code with their parent HW — follows the same boundary the original assignment drew.
+This repository is **the working answer to a course assignment**, not an independent side project. Every choice in it — the 5-stage ladder, the 0.1B baseline, the Triton-attention requirement, the scaling-law hold-out, the controlled SFT/DPO/RLVR comparison, the verifiable-environment + harness + long-horizon agent + self-judge arc — comes from a single source:
+
+> **Prof. Jie Tang (唐杰) — Tsinghua "Advanced Machine Learning" (高级机器学习), class of 2026 Fall, assignment handed out in lecture on 2026-09-17.**
+
+### The assignment, in full
+
+Prof. Tang's framing for the course project was: *"build the modern LLM stack from scratch, end to end, and let the previous stage's output be the next stage's input."* That sentence is what "A Ladder That Climbs the Course" means on the title slide. The 5 rungs of the ladder, in order:
+
+1. **HW1 — Foundations.** Write a tokenizer + Transformer from scratch. End-to-end train a ~0.1B model on raw text. No HuggingFace Trainer as a shortcut.
+2. **HW2 — Systems.** Hand-write a Triton attention kernel. Measure the gain yourself on single- and multi-GPU training and inference. The point isn't "learn Triton"; it's "freeze the model's outputs, then make it run faster."
+3. **HW3 — Data + Scaling.** Start from a raw data dump. Build the full pipeline (parsing → language filter → quality filter → dedup → corpus). Train several smaller models. Fit a scaling law and **extrapolate to a held-out size you didn't train**. That's what turns the homework into a research artifact.
+4. **HW4 — Post-Training.** From the **same** base model, run three controlled post-training routes — **SFT, DPO, RLVR** — and compare them on the **same** evaluation. The controlled comparison is the point: same base, same data budget, what does each route actually change?
+5. **FINAL — Agents.** Build a **verifiable environment** (a coding env with unit tests is the cleanest starting point), a **harness** to run an agent inside it, train / optimize a **long-horizon agent**, and add a **self-judge** loop. The PPT encourages trajectory distillation, memory, and self-improvement as the research levers at this rung.
+
+### Format and grading (from the lecture)
+
+- **2–3 person teams.**
+- **English paper, NeurIPS format.**
+- **W16 in-class demo** (live run).
+- **40% homework** (HW1–HW4); **60% final project** (FINAL).
+- Every deliverable follows: **Problem → Motivation → Method → Results → Analysis → Reproduction**.
+
+### Why this matters, and why it lives in *this* repo
+
+The discipline is what differentiates this from "yet another LLM from-scratch tutorial":
+
+- **The repo is the deliverable.** W16 the team demos the whole ladder in front of the class. There is no separate paper appendix repo.
+- **Stages hand off code, not docs.** HW2 doesn't copy HW1's Transformer — it extends the same one with a Triton attention module under `src/kernels/`. HW3 doesn't fork a new tokenizer — it retrains the existing one on a new corpus. HW4 starts from HW3's checkpoint. FINAL inherits HW4's model.
+- **Extensions, not forks.** New ideas don't open new repos. They open `extensions/EXT-NNN-*` folders that share `src/` with their parent stage and follow the same research template.
+- **Boundaries are deliberately tight.** Five HW's. No HW5/HW6. The first three stages are for *understanding the moving parts*, not for winning on 0.1B benchmarks. The real research payoff starts at HW4 (RLVR, reward design, judge models) and ramps through FINAL (env design, harness, evaluation, self-improvement).
+
+### Where the PPT lives
+
+The lecture slide deck — including the *"A Ladder That Climbs the Course"* diagram and the *Problem → Motivation → Method → Results* footer — is the canonical source for this assignment. The author of this repo is Prof. Tang's student; the PPT is reproduced here for reference and as the seed for our team discussions.
+
+> 🖼 **TODO (next commit):** embed the PPT slides as `docs/course-origin/tang-2026-09-17-aml-ladder.pdf` and a few key slide thumbnails (`docs/course-origin/slide-XX-ladder.png`) in this section.
+
+---
 
 See [README.zh-CN.md](./README.zh-CN.md) for the Chinese-language version.

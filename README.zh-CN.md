@@ -2,9 +2,7 @@
 
 > **从原始文本到自改进智能体** — 亲手搭建现代大模型栈的每一级：分词、训练、系统优化、scaling、后训练（SFT/DPO/RLVR）、可验证环境、长程智能体、自评判。
 
-## 项目缘起
-
-这个仓库是 [唐杰老师《深度学习与大模型》课程](https://github.com/) 大作业的**严肃延伸**。课程核心命题是 *"A Ladder That Climbs the Course"* —— 前一个作业的产出，成为后一个作业的输入；做完 16 周后，仓库本身就是作品，而不是五个互不相关的课程作业。
+> 📌 **缘起（先看这里）**：本仓库是 **唐杰老师 2026 年秋季《高级机器学习》（清华大学）** 课正式布置的 5 级 LLM ladder 大作业的**作业仓库**。作业发布日：**2026-09-17**。详见 [项目缘起](#项目缘起--2026-09-17-清华高级机器学习) 段：完整背景、PPT、评分规则。
 
 我们的 ladder：
 
@@ -168,7 +166,65 @@ bash scripts/setup_env.sh
 
 仓库本身的研究模板（Problem → Motivation → Method → Results → Reproduction）来自那张 PPT 最底部那一行。
 
-HW 与 EXT 编号规范、单一 ladder 不断生长的代码组织、hold-out prediction 验证 scaling law、controlled comparison 隔离后训练变量 —— 都是课程大作业的直接延伸。
+---
+
+## 项目缘起 — 2026-09-17 清华《高级机器学习》
+
+本仓库**直接是这门课的大作业**，不是独立项目。每个决策——5 级 ladder、0.1B baseline、Triton attention 必做、scaling law hold-out 预测、SFT/DPO/RLVR 同基座对照、可验证环境 + harness + 长程 agent + self-judge 收尾——都来自一个唯一来源：
+
+> **唐杰老师 — 清华大学 2026 年秋季《高级机器学习》课，2026-09-17 当堂布置。**
+
+### 作业完整内容（唐老师原话）
+
+> "把大模型全链路亲手走一遍："
+
+- 🔹 **从零写 Tokenizer + Transformer，端到端训一个 0.1B**
+- 🔹 **手写 Triton attention kernel，自己测多卡训练和推理增益**
+- 🔹 **从 raw dump 洗语料，拟合 scaling law 再外推**
+- 🔹 **同一基座上把 SFT、DPO、RLVR 做对照**
+- 🔹 **最后搭可验证环境 + harness，训长程 Agent，还鼓励 self-judge loop**
+
+### 课程节奏
+
+| 周 | 交付 |
+|---|---|
+| W1–W3 | HW1 Foundations |
+| W4–W5 | HW2 Systems |
+| W6–W7 | HW3 Data + Scaling |
+| W8 | Final Project Proposal |
+| W9–W11 | HW4 Post-Training |
+| W10 | Final Mid Report |
+| W12–W15 | FINAL Agent / Harness / Verifier |
+| W16 | **现场 demo** + NeurIPS 格式论文 |
+
+### 评分
+
+- **40%** 作业（HW1–HW4）
+- **60%** 大项目（FINAL）
+- **2–3 人组队**
+- **英文，NeurIPS 格式**
+- W16 现场 demo（live run）
+
+### 为什么"仓库本身就是作品"
+
+唐老师给这门课的核心命题是 *"A Ladder That Climbs the Course"* —— **前一个作业产出的东西，成为后一个作业的输入**。做完 16 周后，仓库本身就是作品，不是五个互不相关的课程作业。
+
+这个原则在本仓库的具体落点：
+
+- **HW1 的 Transformer** 进 `src/model/`，**HW2 不复制**它，而是在 `src/kernels/` 替换 attention 路径。
+- **HW1 的 tokenizer** 进 `src/tokenizer/`，**HW3 不重写**它，而是在同一个 module 上重训。
+- **HW3 的 base checkpoint** 被 **HW4** 直接继承。
+- **HW4 的 model** 是 **FINAL** agent 的底座。
+
+任何新的研究点（一个新 attention kernel、一种新的 data filter、一个新的 RL 算法、一种新的 self-judge 设计）**不开新 repo**，开一个 `extensions/EXT-NNN-*/`，复用 `src/`，遵循同样的研究模板。
+
+### 边界守住
+
+唐老师明确：**不要一开始就加 HW5/HW6**。HW1–HW3 的目标是**亲手掌握底层**，不是让你在 0.1B 上卷 SOTA。真正值得长期投入增量研究的地方，从 HW4 的 Verifier/RLVR 开始，到 FINAL 的 Environment/Harness/Evaluation/Self-Improvement。前半程把地基走通，后半程把仓库变成自己的研究方向。
+
+### PPT 留档
+
+> 🖼 **TODO（下一次 commit）**：把唐老师 2026-09-17 那堂课的 PPT 放到 `docs/course-origin/tang-2026-09-17-aml-ladder.pdf`，把 *"A Ladder That Climbs the Course"* 那张图单独截出来放 `docs/course-origin/slide-ladder.png`，在首页 hero 区引用。
 
 ---
 
