@@ -4,7 +4,18 @@
 
 > 🌐 **Languages**: [English](./README.md) · [简体中文](./README.zh-CN.md)
 
-> 📌 **Course origin (read this first)**: This repo is the **course project for the 5-stage "LLM ladder" assignment** that **Prof. Jie Tang (唐杰)** formally assigned today — **2026-09-17, Tsinghua "Advanced Machine Learning"**. See [Course origin](#course-origin--2026-09-17-tsinghua) below for the full context, the PPT, and what the assignment grades on.
+> 📌 **Course origin (read this first)**: This repo is the **course project for the 5-stage "LLM ladder" assignment** that **Prof. Jie Tang (唐杰)** formally assigned today — **2026-09-17, Tsinghua "Advanced Machine Learning"**. The PPT from that lecture is reproduced below. See [Course origin](#course-origin--2026-09-17-tsinghua) for the assignment text, format, and grading.
+
+![Tang's 2026-09-17 lecture slides — 6-slide collage, including the actual 16-week course map and the 7-rung ladder footer](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+
+The collage above is six slides from Prof. Tang's lecture, in order:
+
+1. **"大模型是通用人工智能的基础设施"** — the LLM use-case pyramid (foundation → dialogue → procedural → autonomous decision).
+2. **"Scaling ↔ 泛化 → 走向更加通用的智能系统"** — what's next to scale: reward functions (RLVR) and task environments (the FINAL rung of the ladder).
+3. **"让机器像人一样思考"** — opening framing for the course.
+4. **"2026: 专注 + 创新"** — the year's research priorities (RLVR + reasoning, long-horizon agent RL, memory & continual learning, self-evaluation & evolution, AI Robotics).
+5. **"Course Map: 16 Weeks, One Story"** — the actual 16-week schedule (W1–W16), reproduced in the bottom-left of the collage.
+6. **"Lecture Roadmap: Three Shifts, One Story"** — historical context: 1980s expert systems → 2017 Transformer → 2024-25 o1/R1 → **2026 = "the scaling era", this course**.
 
 ```
 Raw Data
