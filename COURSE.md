@@ -1,135 +1,1380 @@
-# Course Schedule & Conventions
+# From Token to Agent — 16-Week Course
 
-## Repo name — why `from-token-to-agent`
+> **Goal:** reproduce, as faithfully as practical, the capability ladder implied by Jie Tang's 16-week course: not merely to finish a few demos, but to personally traverse the modern LLM stack from representation and pretraining to post-training, verifiable rewards, long-horizon agents, memory, self-evaluation, and continual improvement.
 
-The GitHub repo name and the local directory name diverge:
-- **GitHub repo:** `from-token-to-agent` (the slogan — what this repo *is about*)
-- **Local directory:** `llm-from-scratch-to-agent/` (the method — what you *do*)
+> **Course ladder:** `labels → word structure → next-token → preferences → verifiers → environment → self-judge`
 
-Don't be confused; the directory name tracks the implementation discipline
-("write everything from scratch"), the repo name tracks the destination
-("a self-improving agent").
+> **Principle:** **do not simplify the learning objectives; only scale down the compute.** A 0.1B model may stand in for a frontier pretraining run, and a 1.5B–9B open base model may stand in for frontier post-training, but the mechanisms themselves should be implemented and measured rather than skipped.
 
 ---
 
-## 16-Week Schedule
+## 0. Course Structure
 
-| Week | Deliverable | Tag |
-|---|---|---|
-| W1–W3 | **HW1** Foundations — Build a LM from Scratch | `v0.1-hw1-foundations` |
-| W4–W5 | **HW2** Systems — Triton Attention + Multi-GPU Benchmark | `v0.2-hw2-systems` |
-| W6–W7 | **HW3** Data + Scaling — Corpus Pipeline + Scaling Law Hold-Out | `v0.3-hw3-scaling` |
-| W8 | **Final Project Proposal** | `v0.4-proposal` |
-| W9–W11 | **HW4** Post-Training — SFT vs DPO vs RLVR (controlled) | `v0.5-post-training` |
-| W10 | **Final Mid Report** (overlaps with HW4) | `v0.6-midthesis` |
-| W12–W15 | **FINAL** Agent — Environment + Harness + Long-Horizon Agent + Self-Judge | `v0.7-agent` |
-| W16 | **Paper + Live Demo** | `v1.0-final` |
+The course has **two overlapping tracks**:
 
-Weeks are loose. Don't gate on calendar — gate on **a working tag**.
+1. **16 weekly modules** — the knowledge and experimental progression.
+2. **5 major deliverables** — HW1, HW2, HW3, HW4, and the Final Project.
+
+The weekly topics are the primary structure. Assignments are milestone integrations; they do **not** replace the weekly modules.
+
+### Weekly topics
+
+| Week | Topic |
+|---|---|
+| W1 | Three Paradigm Shifts |
+| W2 | Architecture Revisited |
+| W3 | Training Dynamics & Scaling Laws |
+| W4 | Compute, Kernels, Parallelism |
+| W5 | Economics of Inference |
+| W6 | Pretraining Data |
+| W7 | Synthetic Data & Governance |
+| W8 | SFT & Distillation |
+| W9 | Preference Learning |
+| W10 | RLVR & Reasoning |
+| W11 | Agent RL: Long-Horizon |
+| W12 | Agent Foundations |
+| W13 | Memory & Continual Learning |
+| W14 | Self-Evaluation & Evolution |
+| W15 | Evaluation & Safety |
+| W16 | What Comes After LLMs? |
+
+### Major deliverables
+
+| Deliverable | Core requirement |
+|---|---|
+| **HW1 — Foundations** | Build tokenizer + Transformer from scratch and train an approximately 0.1B LM end-to-end. |
+| **HW2 — Systems** | Write a Triton attention kernel; measure training/inference and multi-GPU gains. |
+| **HW3 — Data + Scaling** | Turn raw dumps into a usable corpus; fit a scaling law and test extrapolation. |
+| **HW4 — Post-Training** | On the same base model, compare SFT, DPO, and RLVR under a controlled setup; extend into agentic RL. |
+| **Final — Agents** | Build a verifiable environment + harness, run a long-horizon agent, and add self-judge / self-improvement if feasible. |
+
+### Final-project checkpoints
+
+- **W8:** Proposal
+- **W10:** Mid-report
+- **W16:** NeurIPS-style paper + live demo
 
 ---
 
-## The two kinds of work: HW vs EXT
+# 1. Execution Rules
 
-**HW (Homework)** — the course spine, must finish.
+## 1.1 Implement first, framework second
 
-**EXT (Extension)** — incremental work on top of an HW. Has a strict numbering scheme:
-
-```
-EXT-<stage><index>
-
-stage  = HW stage (1, 2, 3, 4, F)
-index  = 3-digit zero-padded counter
+For the mechanism being studied, the first implementation must expose the underlying mechanics.
 
 Examples:
-  EXT-101  HW1 extension #1   (e.g., RoPE)
-  EXT-102  HW1 extension #2   (e.g., GQA)
-  EXT-201  HW2 extension #1   (e.g., Triton attention)
-  EXT-302  HW3 extension #2   (e.g., quality classifier)
-  EXT-403  HW4 extension #3   (e.g., process reward)
-  EXT-501  FINAL extension #1 (e.g., self-judge)
+
+- Tokenizer: implement a minimal BPE trainer before using SentencePiece/tiktoken.
+- Transformer: implement the decoder stack before relying on a full Hugging Face model class.
+- Attention systems: write a Triton kernel before only benchmarking packaged FlashAttention.
+- Data: start from raw documents, not only a pre-cleaned HF dataset.
+- RLVR: perform a real policy update, not merely call an API that already reasons well.
+- Agent: implement a minimal harness loop before hiding everything behind LangGraph or another orchestration library.
+- Memory: evaluate memory strategies; a vector database alone does not count.
+- Self-evaluation: calibrate the judge against a ground-truth verifier; adding a "reflect" prompt alone does not count.
+
+Frameworks are encouraged as **reference implementations and performance baselines** after the basic mechanism is understood.
+
+## 1.2 Two-scale compute strategy
+
+### Scratch Track
+
+Used for W1–W7 and systems fundamentals.
+
+- target model: around **100M parameters**
+- purpose: architecture, optimization, kernels, data, scaling
+- must be cheap enough to retrain repeatedly
+
+### Post-Training Track
+
+Used for W8 onward.
+
+- target: a capable **1.5B–9B open base model**, chosen based on available compute
+- purpose: SFT, DPO, RLVR, agentic RL, long-horizon interaction
+- reason: a 100M LM may fail agent tasks because it lacks base capability, masking the effect of the training method
+
+The two tracks share the same experimental discipline, repository, evaluation system, and reporting format.
+
+## 1.3 Every week produces evidence
+
+Each `weeks/wXX-*` directory should contain:
+
+```text
+README.md
+notes.md
+lab/
+experiments/
+results/
 ```
 
-Every extension is **one folder** under `extensions/EXT-XXX-name/` with its own README using the same Problem → ... → Reproduction template. **Do not fork the repo for new ideas.** Open an EXT.
+Every weekly README answers:
 
-### Why this design
+1. What did I learn?
+2. What did I build?
+3. What did I measure?
+4. What did I conclude?
 
-> "看到新的论文，不需要又新建一个 repo。
-> 比如看到新的 Agent RL 方法：开 EXT-506，在现有环境和 Harness 上复现。
-> 看到一个新的 Attention Kernel：开 EXT-207。"
+Every major assignment uses:
 
-This repo gradually becomes **your LLM research lab**, not your assignment graveyard.
+```
+Problem → Motivation → Method → Experimental Setup → Results → Analysis → Reproduction → Extensions
+```
 
 ---
 
-## The research template (every README, every report)
+# 2. The 16-Week Plan
 
-Every `assignments/hwX/README.md`, `extensions/EXT-XXX/README.md`, and `paper/*/report.md` uses the same skeleton. It comes from 唐杰's PPT footer:
+## W1 — Three Paradigm Shifts
+
+### Core question
+
+How did learning signals evolve from explicit human labels toward signals generated by data, verifiers, environments, and eventually the model itself?
+
+### Learn
+
+- supervised labels vs self-supervised learning
+- characters, words, subwords, byte-level representations
+- why next-token prediction changes the economics of supervision
+- the course ladder: labels → word structure → next-token → preferences → verifiers → environment → self-judge
+
+### Build
+
+Implement three tokenization baselines:
+
+1. character tokenizer
+2. word tokenizer
+3. minimal BPE tokenizer implemented from scratch
+
+### Experiment
+
+Use a mixed Chinese / English / code sample and compare:
+
+- vocabulary size
+- average sequence length
+- compression ratio
+- rare-token fragmentation
+- Chinese vs English vs code behavior
+
+### Deliverables
+
+- `src/tokenizer/bpe.py`
+- tokenizer tests
+- `weeks/w01-paradigm-shifts/results/tokenizer_comparison.md`
+- `docs/signal-ladder.md`
+
+### Pass criteria
+
+- BPE training and encode/decode work without external tokenizer training libraries.
+- encode/decode round-trip tests pass.
+- results contain quantitative comparison, not only examples.
+
+### Extension ideas
+
+- byte-level BPE
+- unigram tokenizer comparison
+- tokenizer fertility across Chinese/English/code
+- vocabulary-size ablation
+
+---
+
+## W2 — Architecture Revisited
+
+### Core question
+
+What remains of the original Transformer in a modern decoder-only LLM, and which architectural changes materially affect training and inference?
+
+### Learn
+
+- decoder-only Transformer
+- pre-norm architecture
+- RMSNorm vs LayerNorm
+- RoPE
+- SwiGLU
+- MHA / MQA / GQA
+- KV cache
+- dense vs MoE concepts
+- total vs activated parameters
+
+### Build
+
+Implement a decoder-only Transformer from scratch with:
+
+- token embeddings
+- RMSNorm
+- RoPE
+- causal self-attention
+- SwiGLU MLP
+- residual connections
+- LM head
+- generation loop
+
+### Experiment
+
+Minimum controlled ablations:
+
+- RMSNorm vs LayerNorm
+- MHA vs GQA
+
+Measure:
+
+- parameter count
+- FLOPs/token estimate
+- memory use
+- tokens/s
+- validation loss after a fixed token budget
+
+### Deliverables
+
+- `src/model/`
+- architecture tests
+- parameter/FLOPs calculator
+- two ablation reports
+
+### Pass criteria
+
+- forward/backward tests pass.
+- model can overfit a tiny batch.
+- model can generate autoregressively.
+- architectural ablations use matched training budgets.
+
+### Research connection
+
+Read GLM-4.5 as a modern example of a large MoE model with hybrid reasoning modes, then contrast frontier-scale design choices with the tiny scratch model.
+
+Recommended: GLM-4.5 technical report — https://arxiv.org/abs/2508.06471
+
+### Extensions
+
+- tiny MoE
+- sparse attention prototype
+- multi-token prediction head
+- weight tying / untied head comparison
+
+---
+
+## W3 — Training Dynamics & Scaling Laws
+
+### Core question
+
+Why does a language model train successfully, and which quantities scale predictably as model size, data, and compute change?
+
+### Learn
+
+- initialization
+- AdamW
+- warmup and cosine schedules
+- gradient clipping
+- batch size / gradient accumulation
+- loss spikes
+- gradient norms
+- training throughput
+- model/data/compute scaling laws
+
+### Build
+
+Complete the full training stack:
 
 ```
-1. Problem       (what?)
-2. Motivation    (why?)
-3. Method        (how?)
+raw text → tokenizer → shards → dataloader → Transformer → optimizer → checkpoint → eval → generation
+```
+
+Train the course baseline at approximately 0.1B parameters.
+
+### Experiment
+
+Run a model-side scaling pilot, for example:
+
+- ~20M
+- ~50M
+- ~100M
+
+Keep the corpus and token budget controlled where appropriate.
+
+Record:
+
+- train/validation loss
+- grad norm
+- LR
+- tokens/s
+- peak memory
+- tokens seen
+- wall-clock / GPU-hours
+
+Fit a simple scaling curve and document where it fails.
+
+### HW1 — Foundations submission
+
+HW1 contains:
+
+1. tokenizer from scratch
+2. Transformer from scratch
+3. end-to-end ~0.1B training
+4. training curves
+5. generation examples
+6. architecture ablation
+7. reproducible run command
+
+### Pass criteria
+
+A fresh environment can reproduce a short training run from one documented command.
+
+---
+
+## W4 — Compute, Kernels, Parallelism
+
+### Core question
+
+Where does Transformer compute time actually go, and how much of model performance is a systems problem rather than a model problem?
+
+### Learn
+
+- GPU memory hierarchy
+- arithmetic intensity
+- kernel launch overhead
+- attention memory complexity
+- FlashAttention intuition
+- Triton programming model
+- DDP / FSDP / tensor parallel basics
+
+### Build
+
+Write a Triton attention kernel.
+
+Compare:
+
+```
+naive PyTorch attention
+vs
+PyTorch SDPA
+vs
+custom Triton attention
+```
+
+### Experiment
+
+At several sequence lengths (for example 512 / 2K / 8K), measure:
+
+- forward latency
+- backward latency
+- peak memory
+- numerical error against a reference
+- achieved throughput
+
+Run at least one real multi-GPU experiment using DDP/FSDP/TP.
+
+### Deliverables
+
+- Triton kernel
+- numerical correctness suite
+- profiler traces
+- multi-GPU benchmark table
+
+### Pass criteria
+
+- output and gradient correctness are within documented tolerances.
+- at least one regime shows a measured systems benefit or a clear explanation of why it does not.
+
+### Extensions
+
+- fused RMSNorm
+- fused SwiGLU
+- sequence parallelism
+- optimizer sharding
+
+---
+
+## W5 — Economics of Inference
+
+### Core question
+
+When a model becomes faster, does serving it actually become cheaper and more useful?
+
+### Learn
+
+- prefill vs decode
+- TTFT and TPOT
+- continuous batching
+- KV cache
+- prefix cache
+- speculative decoding
+- throughput / latency tradeoff
+- serving cost per successful task
+
+### Build
+
+Serve one model using vLLM or SGLang and build a reproducible load generator.
+
+### Experiment
+
+Sweep:
+
+- concurrency
+- batch size
+- prompt length
+- generation length
+- cache on/off where available
+
+Record:
+
+- TTFT
+- TPOT
+- p50/p95 latency
+- input/output tokens/s
+- GPU memory
+- request throughput
+- estimated cost per 1M tokens
+
+Then translate kernel/system gains into economic impact, not just speedup.
+
+### HW2 — Systems submission
+
+HW2 must integrate W4 and W5:
+
+- Triton kernel
+- correctness
+- training/inference profiling
+- multi-GPU measurement
+- serving benchmark
+- cost interpretation
+
+### Research connection
+
+GLM-5 introduces architectural and infrastructure choices aimed at lowering training/inference cost and improving long-horizon agent training efficiency.
+
+Recommended: GLM-5 technical report — https://arxiv.org/abs/2602.15763
+
+---
+
+## W6 — Pretraining Data
+
+### Core question
+
+What transforms a raw web/document dump into a corpus worth spending GPU compute on?
+
+### Learn
+
+- parsing and normalization
+- language identification
+- quality filtering
+- exact and near deduplication
+- contamination
+- data mixture
+- provenance
+- dataset versioning
+
+### Build
+
+Construct a full pipeline:
+
+```
+raw dump
+→ parse
+→ normalize
+→ language filter
+→ quality filter
+→ exact dedup
+→ near dedup
+→ contamination scan
+→ mixture
+→ tokenize
+→ shards
+```
+
+### Experiment
+
+Maintain a data ledger:
+
+| Stage | Documents | Tokens | Retention | Duplicate rate |
+|---|---|---|---|---|
+| Raw | 100% | | | |
+| Parsed | | | | |
+| Quality filtered | | | | |
+| Deduplicated | | | | |
+| Final | | | | |
+
+Train at least one controlled mini-model on raw-ish vs cleaned data.
+
+### Deliverables
+
+- reproducible data pipeline
+- Data Card
+- data lineage manifest
+- contamination-check script
+- quality ablation
+
+### Pass criteria
+
+Every training shard can be traced back to a pipeline version and source class.
+
+---
+
+## W7 — Synthetic Data & Governance
+
+### Core question
+
+When does synthetic data create new capability, and when does it merely amplify errors, bias, duplication, or model collapse?
+
+### Learn
+
+- synthetic task generation
+- rejection sampling
+- LLM-as-judge filtering
+- verifier-filtered generation
+- provenance and licensing concerns
+- contamination and recursive-model-data risks
+
+### Build
+
+Implement a small synthetic-data factory:
+
+```
+Task Generator
+↓
+Candidate Task
+↓
+Solver / Generator
+↓
+Verifier or Judge
+↓
+Quality Filter
+↓
+Training Dataset
+```
+
+### Experiment
+
+Compare three corpora:
+
+1. real-only
+2. cleaned real-only
+3. cleaned real + synthetic
+
+Evaluate downstream loss/task metrics and inspect failure modes.
+
+Complete the full data + scaling experiment started in W3: fit on selected runs, hold one configuration out, predict it, then actually train it and report prediction error.
+
+### HW3 — Data + Scaling submission
+
+Must include:
+
+- raw → usable corpus pipeline
+- Data Card
+- synthetic-data ablation
+- scaling-law fit
+- held-out extrapolation test
+
+### Research connection
+
+Study how modern agent pipelines generate tasks/trajectories and filter them with judges or verifiers rather than relying only on manually written datasets.
+
+Optional frontier reading: ScaleCUA — https://arxiv.org/abs/2607.11185
+
+---
+
+## W8 — SFT & Distillation
+
+### Core question
+
+How does a pretrained base model become a task-following model, and what information can be transferred from a stronger policy?
+
+### Learn
+
+- instruction tuning
+- chat templates
+- response masks
+- loss masking
+- teacher/student distillation
+- reasoning vs direct-response data
+- trajectory SFT
+
+### Build
+
+Select one capable open base model for the Post-Training Track.
+
+Create a controlled SFT dataset and train an SFT checkpoint.
+
+Add one distillation experiment:
+
+- strong teacher → weaker student, or
+- longer/high-quality trajectory → compressed student behavior
+
+### Experiment
+
+Compare:
+
+- base model
+- SFT model
+- distilled variant
+
+Use a fixed eval set and track training tokens/GPU-hours.
+
+### Final Project Proposal due
+
+2–3 person team if applicable; otherwise solo.
+
+Proposal must specify:
+
+- problem
+- motivation
+- environment
+- verifier
+- harness
+- base model
+- evaluation metrics
+- compute budget
+- key hypothesis
+
+### Research connection
+
+GLM-4.5 is useful here for understanding staged post-training and expert-model iteration.
+
+Reading: https://arxiv.org/abs/2508.06471
+
+---
+
+## W9 — Preference Learning
+
+### Core question
+
+When there is no deterministic verifier, how reliable are preferences and learned judges as training signals?
+
+### Learn
+
+- preference pairs
+- Bradley–Terry intuition
+- reward models
+- DPO
+- judge bias
+- calibration
+- preference vs correctness
+
+### Build
+
+From the same prompt distribution used in W8, construct chosen/rejected pairs.
+
+Train DPO from the same starting checkpoint used in the controlled comparison.
+
+### Experiment
+
+Compare on the same evaluation set:
+
+- Base
+- SFT
+- DPO
+
+Also compare rankings produced by:
+
+- heuristic/human rule
+- deterministic verifier where possible
+- LLM judge
+- learned reward model if feasible
+
+### Deliverables
+
+- preference dataset
+- DPO checkpoint
+- judge calibration report
+- controlled comparison table
+
+### Pass criteria
+
+You must identify at least one case where preference/judge signal disagrees with objective correctness or task success.
+
+---
+
+## W10 — RLVR & Reasoning
+
+### Core question
+
+What changes when the learning signal becomes a verifier rather than a human preference?
+
+### Learn
+
+- RL with verifiable rewards
+- GRPO-style group-relative optimization
+- reward variance
+- task difficulty sampling
+- outcome reward vs process reward
+- reward hacking
+
+### Build
+
+Choose at least two verifiable domains, preferably:
+
+- math: exact answer verifier
+- code: executable unit-test verifier
+
+Implement a real RLVR run with actual policy updates.
+
+### Experiment
+
+Controlled comparison:
+
+```
+same base / prompt distribution / eval
+SFT vs DPO vs RLVR
+```
+
+Track:
+
+- success/pass@1
+- reward
+- output length
+- training tokens
+- GPU-hours
+- reward variance
+- difficulty buckets
+
+### Process-reward extension
+
+Compare if feasible:
+
+- terminal/outcome verifier
+- process reward
+- outcome + process reward
+
+Recommended readings:
+
+- ReST-MCTS*: https://arxiv.org/abs/2406.03816
+- TDRM: https://arxiv.org/abs/2509.15110
+
+### Final Mid-report due
+
+Must include the first real results, failures, compute usage, and whether the Final hypothesis should be revised.
+
+---
+
+## W11 — Agent RL: Long-Horizon
+
+### Core question
+
+How does RL change when the policy acts repeatedly inside an environment rather than producing one final response?
+
+### Learn
+
+- trajectory-level credit assignment
+- tool interaction
+- environment observations
+- sparse terminal rewards
+- process constraints
+- asynchronous rollout/training
+- long-horizon failure modes
+
+### Build
+
+Extend the Final Project environment into a trajectory loop:
+
+```
+Task
+↓
+Model
+↓
+Action
+↓
+Environment
+↓
+Observation
+↓
+Model
+↓
+...
+↓
+Terminal State
+↓
+Verifier / Reward
+```
+
+Run at least one genuine Agent-RL experiment if compute permits. If full training is too expensive, run a smaller environment/model while keeping the full mechanics.
+
+### Experiment
+
+Measure performance against interaction budget:
+
+- max turns
+- tool calls
+- token budget
+- wall-clock budget
+
+Study whether additional interaction actually improves success or merely creates longer failure trajectories.
+
+### HW4 — Post-Training submission
+
+HW4 integrates W8–W11:
+
+- SFT
+- DPO
+- RLVR
+- same base/task distribution/evaluation
+- cost accounting
+- long-horizon agentic extension
+
+### Research connections
+
+- GLM-5: asynchronous RL and asynchronous agent RL — https://arxiv.org/abs/2602.15763
+- slime: training/rollout/reward/verifier/environment integration — https://github.com/THUDM/slime
+
+---
+
+## W12 — Agent Foundations
+
+### Core question
+
+What exists between an LLM API and a capable Agent, and how much capability comes from the harness rather than the model?
+
+### Learn
+
+- action/observation loop
+- tool schemas
+- parsing
+- context management
+- sandboxing
+- retries
+- budgets
+- termination
+- trace logging
+
+### Build
+
+Implement a minimal harness from scratch containing:
+
+- model adapter
+- tool registry
+- action parser
+- observation injection
+- context manager
+- retry policy
+- step/token/time budget
+- termination condition
+- trace logger
+
+### Experiment
+
+The key experiment of this week:
+
+```
+Same model
+Same tasks
+Same tools
+Different harness policies
+```
+
+Compare:
+
+- task success
+- invalid tool calls
+- retries
+- steps
+- tokens
+- latency
+
+### Research connections
+
+- AgentTuning: https://arxiv.org/abs/2310.12823
+- AgentBench: https://arxiv.org/abs/2308.03688
+
+### Pass criteria
+
+You can attribute at least one measurable performance difference to a harness decision rather than a model change.
+
+---
+
+## W13 — Memory & Continual Learning
+
+### Core question
+
+How should an Agent retain useful experience without filling context with irrelevant history or catastrophically overwriting old behavior?
+
+### Learn
+
+Distinguish:
+
+- **working memory** — current task/context
+- **episodic memory** — past trajectories/episodes
+- **procedural memory** — reusable skills/rules distilled from experience
+
+Also learn:
+
+- retrieval interference
+- forgetting
+- stability–plasticity tradeoff
+- continual adaptation
+
+### Build
+
+Implement at least three conditions:
+
+1. no external memory
+2. raw trajectory retrieval
+3. summarized or procedural memory
+
+### Experiment
+
+Measure:
+
+- new-task success
+- previously learned-task regression
+- retrieval precision
+- context/token overhead
+- negative transfer
+
+### Research connection
+
+INFTY is a useful THUDM reference for continual-learning optimization and the stability–plasticity problem:
+
+https://github.com/THUDM/INFTY
+
+### Pass criteria
+
+Memory must be evaluated as an intervention, not demonstrated only with anecdotal examples.
+
+---
+
+## W14 — Self-Evaluation & Evolution
+
+### Core question
+
+Can the system determine when it is wrong, use that information to improve the current trajectory, and eventually convert successful correction into a better policy?
+
+### Learn
+
+- self-critique
+- self-judge
+- calibration
+- verifier-guided retry
+- trajectory selection
+- process reward
+- iterative self-training / distillation
+
+### Build
+
+Implement:
+
+```
+Agent trajectory
+↓
+Self Judge
+↓
+Failure Diagnosis
+↓
+Retry / Revise
+↓
+Ground-truth Verifier
+```
+
+### Experiment
+
+Compare:
+
+- first attempt
+- self-judge retry
+- external-judge retry
+- verifier-guided retry
+
+Measure judge quality against the actual verifier:
+
+- precision
+- recall
+- false positive / false negative
+- score/reward correlation
+
+Then, if feasible, distill selected successful trajectories into the policy and measure whether improvement survives without the judge loop.
+
+### Research connections
+
+- ReST-MCTS*: process-reward-guided self-training — https://arxiv.org/abs/2406.03816
+- TDRM: temporally consistent reward modeling — https://arxiv.org/abs/2509.15110
+
+### Pass criteria
+
+A self-judge is not considered useful unless its calibration against an external verifier is reported.
+
+---
+
+## W15 — Evaluation & Safety
+
+### Core question
+
+What does "better Agent" actually mean when capability, reliability, cost, security, and safety can move in different directions?
+
+### Learn
+
+- interactive-agent evaluation
+- benchmark leakage
+- pass@k and task success
+- cost-aware evaluation
+- long-horizon reliability
+- prompt injection through observations/tools
+- permission boundaries
+- sandbox security
+
+### Build
+
+Freeze the Final benchmark and create a multi-dimensional evaluation matrix.
+
+Minimum metrics:
+
+| Dimension | Example metrics |
+|---|---|
+| Capability | task success, pass@1/pass@k |
+| Tool use | valid/correct tool-call rate |
+| Long horizon | steps-to-success, timeout rate |
+| Reliability | retry/recovery rate |
+| Efficiency | tokens/successful task |
+| Systems | latency, TTFT where applicable |
+| Economics | cost/successful task |
+| Memory | transfer, forgetting |
+| Judge | calibration |
+| Safety | unsafe-action rate |
+| Security | prompt-injection success rate |
+
+### Red-team lab
+
+Create malicious content delivered through at least two channels, such as:
+
+- malicious file content
+- malicious webpage/document text
+- malicious tool output
+
+Check whether the agent:
+
+- obeys untrusted instructions
+- crosses tool permissions
+- leaks hidden context
+- takes irreversible action without verification
+
+### Deliverables
+
+- frozen eval set
+- evaluator implementation
+- failure taxonomy
+- safety/security report
+
+### Pass criteria
+
+Final claims may use only metrics defined before the final benchmark run.
+
+---
+
+## W16 — What Comes After LLMs?
+
+### Core question
+
+If the model is no longer the only object being optimized, what is the next unit of intelligence: model, harness, environment, memory, evaluator, or a self-improving system containing all of them?
+
+### Final integration
+
+Run the frozen benchmark and produce the final ablation table.
+
+Recommended ablations:
+
+```
+Base model
++ SFT
++ RLVR
++ Harness
++ Memory
++ Self-Judge
+(+ Agent RL if completed)
+```
+
+The exact stack may differ, but every claimed gain needs a controlled baseline.
+
+### Final submission
+
+1. NeurIPS-style paper (English)
+2. Live demo
+3. complete reproducibility instructions
+4. experiment registry
+5. final model/harness/environment configuration
+6. failure analysis
+7. compute and cost accounting
+
+Paper structure:
+
+1. Problem — what?
+2. Motivation — why?
+3. Method — how?
 4. Experimental Setup
 5. Results
-6. Analysis
-7. Reproduction
-8. Extensions
-```
+6. Analysis — did it work, and why?
+7. Limitations / Safety
+8. Future Work
 
-**坚持这个格式。** The byproduct is: you're training yourself to turn any engineering task into a research artifact.
+### Final reflection
 
----
-
-## HW1 Definition of Done
-
-| Surface | Must have |
-|---|---|
-| **Tokenizer** | vocab size, compression ratio, sample tokenization |
-| **Model** | parameter count is computable from config |
-| **Training** | train / val loss reported |
-| **Performance** | tokens/s, peak memory |
-| **Generation** | fixed-prompt samples saved to `results/` |
-| **Reproduction** | one command re-trains the model |
-
-**Lock in `checkpoints/hw1/baseline-100m/`** as the baseline. Do not modify it after W3. HW2/HW3/HW4 all branch from this checkpoint; changing it retroactively breaks every comparison.
-
----
-
-## HW1 → HW2 → HW3 → HW4 → FINAL hand-off contract
+Return to the original ladder:
 
 ```
-HW1 outputs:
-  src/tokenizer/  ──┐
-  src/model/       ──┼── HW2 swaps in src/kernels/  (attention is the only replaced layer)
-  src/training/    ──┘
-  checkpoints/hw1/baseline-100m/  ──┐
-                                    ├── HW3 retrains tokenizer on new corpus, refits scaling law
-                                    ├── HW4 starts post-training from a chosen-scale checkpoint
-                                    └── FINAL starts agent loop on top of HW4 model
+labels
+→ word structure
+→ next-token
+→ preferences
+→ verifiers
+→ environment
+→ self-judge
 ```
 
-If at any stage you find yourself copying code from a prior stage into a new folder, **stop**. Open an EXT instead, or refactor the prior stage.
+For each transition, answer:
+
+- What produced the learning signal?
+- How expensive was that signal?
+- How reliable was it?
+- What new failure modes appeared?
+- How much human supervision remained in the loop?
 
 ---
 
-## File & commit conventions
+# 3. Recommended Final Project: Verifiable Coding Agent
 
-- `git tag -a vX.Y-<stage> -m "..."` at every milestone.
-- One commit per logical unit ("add RoPE", not "W3 stuff").
-- Commit messages: `hwN:` or `ext-XXX:` prefix, then one-line summary.
-- Don't commit checkpoints to Git. They're under `checkpoints/` but `.gitignore`d, and we keep a SHA + metadata sidecar.
+The default Final Project is a coding/software-engineering agent, because it naturally combines nearly every course objective:
+
+```
+Repository + Issue
+↓
+Harness
+↓
+Model
+↓
+read / search / edit / test / shell
+↓
+Sandbox Environment
+↓
+Patch + Unit Tests
+↓
+Verifier
+↓
+Reward / Feedback / Self-Judge
+```
+
+It supports:
+
+- long-horizon interaction
+- deterministic or semi-deterministic verification
+- tool use
+- sandboxing
+- trajectory logging
+- agent RL
+- memory
+- self-evaluation
+- safety boundaries
+
+Alternative projects:
+
+- Deep Research / Search Agent
+- Computer-Use Agent
+
+The key criterion is verifiability, not flashiness.
 
 ---
 
-## What this course is NOT optimizing for
+# 4. Repository Layout
 
-- SOTA on 0.1B models. The first 3 stages are for **understanding the moving parts**, not beating a benchmark.
-- "Complete coverage" of LLM topics. We pick the 5 ladders; that's it.
-- A general-purpose Agent framework on day one. FINAL = one verifiable env + one agent.
+```
+from-token-to-agent/
+│
+├── README.md
+├── COURSE.md
+├── PROJECT.md
+│
+├── weeks/
+│   ├── w01-paradigm-shifts/
+│   ├── w02-architecture-revisited/
+│   ├── w03-training-dynamics-scaling-laws/
+│   ├── w04-compute-kernels-parallelism/
+│   ├── w05-economics-of-inference/
+│   ├── w06-pretraining-data/
+│   ├── w07-synthetic-data-governance/
+│   ├── w08-sft-distillation/
+│   ├── w09-preference-learning/
+│   ├── w10-rlvr-reasoning/
+│   ├── w11-agent-rl-long-horizon/
+│   ├── w12-agent-foundations/
+│   ├── w13-memory-continual-learning/
+│   ├── w14-self-evaluation-evolution/
+│   ├── w15-evaluation-safety/
+│   └── w16-what-comes-after-llms/
+│
+├── assignments/
+│   ├── hw1-foundations/
+│   ├── hw2-systems/
+│   ├── hw3-data-scaling/
+│   ├── hw4-post-training/
+│   └── final-project/
+│
+├── src/
+│   ├── tokenizer/
+│   ├── model/
+│   ├── training/
+│   ├── kernels/
+│   ├── serving/
+│   ├── data/
+│   ├── post_training/
+│   ├── rl/
+│   ├── environments/
+│   ├── harness/
+│   ├── memory/
+│   └── evaluation/
+│
+├── configs/
+├── experiments/
+├── extensions/
+├── reports/
+├── paper/
+└── docs/course-origin/
+```
 
-What it **is** optimizing for:
+`weeks/` is the learning progression.
+`assignments/` is the submission view.
+`src/` is the one codebase that keeps growing.
+`extensions/` is where work beyond the course baseline lives.
 
-- A repo where every stage's output is the next stage's input.
-- A research template you can apply to anything new you read.
-- Extensions, not forks.
+---
+
+# 5. Extension Convention
+
+Do not create a new project for every new paper. Add an extension to the relevant week.
+
+Example:
+
+```
+EXT-W2-01  Tiny MoE
+EXT-W4-01  Fused RMSNorm
+EXT-W5-01  Prefix Cache Economics
+EXT-W7-01  Verifier-Filtered Synthetic Tasks
+EXT-W10-01 Process Reward + RLVR
+EXT-W11-01 Async Agent Rollouts
+EXT-W12-01 Harness Policy Ablation
+EXT-W13-01 Procedural Memory
+EXT-W14-01 Self-Judge Calibration
+EXT-W15-01 Prompt-Injection Red Team
+```
+
+Each extension must state:
+
+- hypothesis
+- baseline
+- intervention
+- metric
+- result
+- conclusion
+
+---
+
+# 6. Experiment Discipline
+
+Every serious run should log at least:
+
+```
+experiment_id
+code commit
+config hash
+model/checkpoint
+training data version
+eval data version
+seed
+GPU type/count
+wall-clock
+GPU-hours
+tokens trained/generated
+metrics
+artifacts
+```
+
+Do not overwrite failed experiments. Failed runs are part of the course record.
+
+For controlled comparisons, change one major factor at a time whenever practical.
+
+---
+
+# 7. Core Research Reading Spine
+
+## GLM / Z.ai / THUDM line
+
+- GLM-4.5: Agentic, Reasoning, and Coding (ARC) Foundation Models
+  https://arxiv.org/abs/2508.06471
+- GLM-5: from Vibe Coding to Agentic Engineering
+  https://arxiv.org/abs/2602.15763
+- slime — LLM post-training framework for RL Scaling
+  https://github.com/THUDM/slime
+- ReST-MCTS: LLM Self-Training via Process Reward Guided Tree Search*
+  https://arxiv.org/abs/2406.03816
+- TDRM: Smooth Reward Models with Temporal Difference for LLM RL and Inference
+  https://arxiv.org/abs/2509.15110
+- AgentTuning: Enabling Generalized Agent Abilities for LLMs
+  https://arxiv.org/abs/2310.12823
+- AgentBench: Evaluating LLMs as Agents
+  https://arxiv.org/abs/2308.03688
+- ScaleCUA: Scaling Computer Use Agents with Verifiable Task Synthesis and Efficient Online RL
+  https://arxiv.org/abs/2607.11185
+- INFTY — Continual AI optimization toolkit
+  https://github.com/THUDM/INFTY
+
+### How to read papers in this course
+
+For every important paper, record:
+
+```
+Problem
+Why previous methods fail
+Learning signal
+Training data
+Environment
+Verifier / Reward
+Optimization method
+Systems assumptions
+Evaluation
+Main ablation
+What I can reproduce at small scale
+What I disagree with / what remains unproven
+```
+
+---
+
+# 8. Definition of Course Completion
+
+- [ ] I trained my own tokenizer.
+- [ ] I implemented a Transformer rather than only instantiating one.
+- [ ] I trained an approximately 0.1B LM end-to-end.
+- [ ] I measured training dynamics and performed a scaling experiment.
+- [ ] I wrote and validated a Triton attention kernel.
+- [ ] I ran a real multi-GPU/system benchmark.
+- [ ] I measured inference economics, not only latency.
+- [ ] I built a raw-data-to-corpus pipeline.
+- [ ] I fitted a scaling law and tested an actual extrapolation.
+- [ ] I generated and governed synthetic data.
+- [ ] I ran SFT.
+- [ ] I ran DPO or equivalent preference optimization.
+- [ ] I ran a real RLVR policy update with a verifier.
+- [ ] I compared SFT / preference learning / RLVR under controlled conditions.
+- [ ] I built a verifiable interactive environment.
+- [ ] I implemented a minimal Agent harness myself.
+- [ ] I evaluated harness effects separately from model effects.
+- [ ] I implemented and ablated an Agent memory mechanism.
+- [ ] I calibrated a self-judge against an external verifier.
+- [ ] I evaluated capability, cost, reliability, and safety.
+- [ ] I produced an English research-style final paper.
+- [ ] I gave a live end-to-end demo.
+
+If only the first half is completed, this is an LLM-from-scratch project.
+
+If only the second half is completed, this is an Agent engineering project.
+
+The purpose of From Token to Agent is to finish both, and understand the learning-signal transitions that connect them.
+
+---
+
+# 9. Course North Star
+
+The final question is not:
+
+> "Can I build a Transformer?"
+
+or:
+
+> "Can I build an Agent?"
+
+It is:
+
+> **Can I understand, implement, measure, and improve the entire path by which an AI system acquires capability — from raw token structure, through next-token learning and post-training, to feedback from verifiers, environments, memory, and ultimately self-evaluation?**
+
+That is the standard for this repository.
