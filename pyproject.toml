@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "token-to-agent"
+version = "0.1.0"
+description = "16-week course project (Tsinghua AML 2026 Fall): from raw text to a self-improving agent."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Course author (Prof. Jie Tang's student, Tsinghua AML 2026 Fall)" },
+]
+keywords = ["llm", "post-training", "rlvr", "agent", "course"]
+
+# Minimal runtime deps. Add more as the course progresses.
+dependencies = [
+    "torch>=2.0",
+    "pyyaml>=6.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+data = ["pandas>=2.0", "matplotlib>=3.7"]
+serving = []  # vLLM / SGLang added when W5 starts
+test = ["pytest>=7.0"]
+
+[project.scripts]
+token-to-agent-train = "scripts.train:main"
+token-to-agent-evaluate = "scripts.evaluate:main"
+token-to-agent-generate = "scripts.generate:main"
+token-to-agent-benchmark = "scripts.benchmark:main"
+token-to-agent-serve = "scripts.serve:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["token_to_agent*"]
+
+[tool.setuptools.package-dir]
+"" = "src"

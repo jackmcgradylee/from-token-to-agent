@@ -7,8 +7,8 @@ _repo_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_repo_root))
 
 import torch
-from src.model import TransformerLM, TransformerConfig, count_params
-from src.model.rope import precompute_rope_cache, apply_rope
+from src.token_to_agent.model import TransformerLM, TransformerConfig, count_params
+from src.token_to_agent.model.rope import precompute_rope_cache, apply_rope
 
 
 def test_model_forward_backward():

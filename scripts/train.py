@@ -1,28 +1,31 @@
-"""CLI entry: train the model from a YAML config.
+"""CLI entry: train a model from a YAML config (used by W3, W8–W11).
+
+Reads:
+  - config: configs/pretrain/<name>.yaml  (HW1)
+  - config: configs/sft/<name>.yaml       (HW4 W8)
+  - config: configs/dpo/<name>.yaml       (HW4 W9)
+  - config: configs/rlvr/<name>.yaml      (HW4 W10–W11)
 
 Usage:
-    python scripts/train.py --config configs/hw1/toy-5m.yaml
-
-The config file holds model + training hyperparameters + tokenizer path.
+    PYTHONPATH=src python scripts/train.py --config configs/pretrain/toy-5m.yaml
 """
 
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
+_repo_root = Path(__file__).resolve().parents[1]
+for p in (str(_repo_root), str(_repo_root / "src")):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 import yaml
 
-# Make `src/` importable regardless of CWD.
-_repo_root = Path(__file__).resolve().parents[1]
-if str(_repo_root) not in sys.path:
-    sys.path.insert(0, str(_repo_root))
-
-from src.model import TransformerLM, TransformerConfig, count_params  # noqa: E402
-from src.tokenizer.bpe import BPETokenizer  # noqa: E402
-from src.training.train import train, TrainConfig  # noqa: E402
+from src.token_to_agent.tokenizer.bpe import BPETokenizer
+from src.token_to_agent.model import TransformerLM, TransformerConfig, count_params
+from src.token_to_agent.training.train import train, TrainConfig
 
 
 def load_yaml(path: str) -> dict:
@@ -34,22 +37,17 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--config", required=True)
     p.add_argument("--device", default="cpu", choices=["cpu", "cuda"])
-    p.add_argument(
-        "--tokenizer",
-        default=None,
-        help="Override tokenizer path; default = ckpt_dir/tokenizer.json",
-    )
+    p.add_argument("--tokenizer", default=None)
     args = p.parse_args()
 
     cfg = load_yaml(args.config)
-    cfg_path = Path(args.config).resolve()
 
-    ckpt_dir = cfg.get("ckpt_dir", "checkpoints/run")
-    os.makedirs(ckpt_dir, exist_ok=True)
+    ckpt_dir = cfg.get("ckpt_dir", "artifacts/checkpoints/run")
+    Path(ckpt_dir).mkdir(parents=True, exist_ok=True)
 
-    # Build tokenizer
-    tok_path = args.tokenizer or os.path.join(ckpt_dir, "tokenizer.json")
-    if os.path.exists(tok_path):
+    # Build tokenizer (or load existing)
+    tok_path = args.tokenizer or str(Path(ckpt_dir) / "tokenizer.json")
+    if Path(tok_path).exists():
         print(f"[train] loading tokenizer from {tok_path}")
         tok = BPETokenizer.load(tok_path)
     else:
@@ -61,12 +59,10 @@ def main() -> int:
             lines,
             target_vocab_size=cfg["tokenizer"]["vocab_size"],
             min_pair_freq=cfg["tokenizer"].get("min_pair_freq", 2),
-            verbose=True,
         )
         tok.save(tok_path)
         print(f"[train] tokenizer saved to {tok_path}: {tok.stats_dict()}")
 
-    # Update model vocab_size to match tokenizer.
     cfg["model"]["vocab_size"] = len(tok.id_to_bytes)
     model_cfg = TransformerConfig(**cfg["model"])
     model = TransformerLM(model_cfg)

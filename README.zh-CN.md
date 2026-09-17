@@ -1,244 +1,116 @@
 # From Token to Agent · 从分词到智能体
 
-> **从原始文本到自改进智能体** — 亲手搭建现代大模型栈的每一级：分词、训练、系统优化、scaling、后训练（SFT/DPO/RLVR）、可验证环境、长程智能体、自评判。
+> 从分词和预训练，到 RLVR、长程智能体、自改进——
+> 从零搭建现代 AI 栈。
 
-> 🌐 **Languages**: [English](./README.md) · [简体中文](./README.zh-CN.md)
+---
 
-> 📌 **缘起（先看这里）**：本仓库是 **唐杰老师 2026 年秋季《高级机器学习》（清华大学）** 课正式布置的 5 级 LLM ladder 大作业的**作业仓库**。作业发布日：**2026-09-17**。下面是那天课的 PPT 6 张合图。详见 [项目缘起](#项目缘起--2026-09-17-清华高级机器学习) 段：完整背景、评分规则。
+## Learning Signal Ladder
+
+```
+labels
+→ word structure
+→ next-token
+→ preferences
+→ verifiers
+→ environment
+→ self-judge
+```
+
+这是唐杰老师 2026 年秋季清华大学《高级机器学习》课（2026-09-17 当堂布置）所蕴含的能力梯子。每往上一级，"signal 越来越便宜来生产 — 人类再退出一圈"。
+
+下面是那天课的 PPT 6 张合图：
 
 ![唐杰 2026-09-17《高级机器学习》课 PPT 6 张合图，含 16 周课程表和 ladder footer](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
 
-合图里 6 张幻灯片，按顺序：
+合图按顺序：LLM 用例金字塔、Scaling ↔ 泛化时间线、开课引入（"让机器像人一样思考"）、2026 研究方向、**16 周课程表**、历史脉络（三次范式转移，1980s → 2026）。
 
-1. **"大模型是通用人工智能的基础设施"** — LLM 用例金字塔（基座 → 对话 → 程序性 → 自主决策）。
-2. **"Scaling ↔ 泛化 → 走向更加通用的智能系统"** — 下一个要 scaling 的是：奖励函数（RLVR）+ 任务环境（ladder 最末一环）。
-3. **"让机器像人一样思考"** — 开课引入。
-4. **"2026: 专注 + 创新"** — 今年研究方向（RLVR + reasoning / 长程 agent RL / 记忆 + 持续学习 / 自评估 + 演化 / AI Robotics）。
-5. **"Course Map: 16 Weeks, One Story"** — 16 周课程表（W1–W16），在合图左下。
-6. **"Lecture Roadmap: Three Shifts, One Story"** — 历史脉络：1980s 专家系统 → 2017 Transformer → 2024-25 o1/R1 → **2026 = "the scaling era"，这堂课从这里开始**。
+## 进度
 
 ```
-原始语料
-   ↓
-Tokenizer
-   ↓
-0.1B Base Model（Transformer 自己实现）
-   ↓
-Systems Optimization（Triton / KV cache / 并行）
-   ↓
-Better Data / Scaling Law
-   ↓
-SFT / DPO / RLVR
-   ↓
-Verifiable Environment
-   ↓
-Harness（智能体调用框架）
-   ↓
-Long-Horizon Agent
-   ↓
-Self-Judge
+W01  Three Paradigm Shifts                   Done (smoke)
+W02  Architecture Revisited                  In Progress
+W03  Training Dynamics & Scaling Laws        In Progress
+W04  Compute, Kernels, Parallelism           In Progress
+W05  Economics of Inference                  Not Started
+W06  Pretraining Data                        Not Started
+W07  Synthetic Data & Governance             Not Started
+W08  SFT & Distillation                      Not Started
+W09  Preference Learning                     Not Started
+W10  RLVR & Reasoning                        Not Started
+W11  Agent RL: Long-Horizon                  Not Started
+W12  Agent Foundations                       Not Started
+W13  Memory & Continual Learning             Not Started
+W14  Self-Evaluation & Evolution             Not Started
+W15  Evaluation & Safety                     Not Started
+W16  What Comes After LLMs?                  Not Started
 ```
 
-每一级都是下一级的输入。`src/` 是不断生长的代码库；`assignments/` 是作业交付视图；`extensions/` 是后加的研究延伸。**不新建 repo，不复制代码。**
-
-英文版 README 见 [README.md](./README.md)。COURSE 排程与 HW/EXT 编号规范见 [COURSE.md](./COURSE.md)。
-
----
-
-## 五大正式作业
-
-| # | 主题 | 核心任务 | 必交结果 | 给下一级留的接口 |
-|---|---|---|---|---|
-| HW1 | Foundations — 从零搭 LM | Tokenizer + Transformer，端到端训练约 0.1B 模型 | tokenizer、模型代码、训练脚本、checkpoint、loss 曲线、生成样例、实验报告 | `src/tokenizer/`、`src/model/`、`src/training/`、`checkpoints/hw1/baseline-100m/` |
-| HW2 | Systems — 把它跑快 | 手写 Triton Attention Kernel，并测试单卡/多卡训练和推理 | correctness、latency、throughput、显存、scaling efficiency | `src/kernels/`（替换 `src/model/attention.py` 的 attention 路径） |
-| HW3 | Data + Scaling — 让数据可预测 | 从原始 dump 构建语料；训练不同规模模型；拟合 Scaling Law 并外推 | data pipeline、Data Card、模型实验点、Scaling 曲线、预测误差 | `src/data/`、tokenizer 重训、scaling 外推 |
-| HW4 | Post-Training — SFT vs DPO vs RLVR | 从同一个 Base Model 出发，做三条后训练路线的 controlled comparison | 三套 checkpoint、统一评测、训练曲线、效果/成本比较 | `src/post_training/`，base model 来自 HW3 |
-| FINAL | Agents — Environment + Harness + Long-Horizon Agent | 搭建可验证环境和 harness，训练/优化长程 Agent；加入 self-judge | Proposal、Mid Report、Agent、Harness、Verifier、最终论文、Live Demo | `src/environments/`、`src/harness/`、`src/evaluation/` |
-
-**不要一开始就加 HW5、HW6。** 新想法全部作为 Extension 挂在五阶段下面（`EXT-101..505`）。
-
----
-
-## 仓库目录
-
 ```
-from-token-to-agent/
-├── README.md           ← 英文版（README.md）
-├── README.zh-CN.md     ← 你正在看的中文版
-├── COURSE.md           ← 16 周节奏 + HW/EXT 编号规范 + 研究模板
-│
-├── assignments/        ← 作业交付视图（每次作业按 Problem → Motivation → Method → Results → Reproduction 模板）
-│   ├── hw1-foundations/
-│   ├── hw2-systems/
-│   ├── hw3-data-scaling/
-│   ├── hw4-post-training/
-│   └── final-agent/
-│
-├── src/                ← 持续生长的代码库（每级作业往这里写，不复制）
-│   ├── tokenizer/      ← BPE（HW1；HW3 重训）
-│   ├── model/          ← Transformer（HW1；HW2 换 attention）
-│   ├── training/       ← 训练循环（HW1；之后每级都复用）
-│   ├── kernels/        ← Triton attention 等（HW2）
-│   ├── data/           ← 语料 pipeline（HW3）
-│   ├── post_training/  ← SFT/DPO/RLVR（HW4）
-│   ├── environments/   ← 可验证环境（FINAL）
-│   ├── harness/        ← 智能体调用框架（FINAL）
-│   └── evaluation/     ← 统一评测（HW4 + FINAL）
-│
-├── configs/            ← 每级作业的 YAML 配置
-├── experiments/        ← 实验产物
-├── checkpoints/        ← 模型权重（git 忽略，按 tag 留 sidecar）
-├── extensions/         ← EXT-XXX 增量工作
-├── reports/            ← 跨阶段的分析
-├── paper/              ← Proposal / Mid Report / Final Paper
-├── scripts/            ← CLI 入口
-├── data/               ← 原始 + 处理后数据（git 忽略）
-└── tests/              ← 单测
+HW1 — Foundations          In Progress
+HW2 — Systems              In Progress
+HW3 — Data + Scaling       Not Started
+HW4 — Post-Training        Not Started
+Final Project              Not Started
 ```
 
-### 为什么这样切分？
+详细当前状态和下一步具体动作见 [`ROADMAP.md`](./ROADMAP.md)。
 
-`assignments/` 是**交作业视图**——按研究模板写短文档。
-`src/` 是**持续生长的代码**。HW2 不是把 HW1 的 Transformer 复制一份，而是在同一个 `src/model/attention.py` 旁边放一个 `src/kernels/attention.py`，让模型自己选；HW3 不是新 tokenizer，而是重训现有的那一个。**代码积累，不复制。**
+## 课程
 
----
+完整 16 周排程、每周交付物、Pass Criteria、Extension 规范都在 [`COURSE.md`](./COURSE.md)。这份文件是 syllabus 的 source of truth，按"基本冻结"对待。
 
-## 里程碑 & Git Tag
-
-| 周 | 交付 | Git tag |
-|---|---|---|
-| W1–W3 | HW1 Foundations | `v0.1-hw1-foundations` |
-| W4–W5 | HW2 Systems | `v0.2-hw2-systems` |
-| W6–W7 | HW3 Data + Scaling | `v0.3-hw3-scaling` |
-| W8 | Final Project Proposal | `v0.4-proposal` |
-| W9–W11 | HW4 Post-Training | `v0.5-post-training` |
-| W10 | Final Mid Report | `v0.6-midthesis` |
-| W12–W15 | Agent / Harness / Verifier | `v0.7-agent` |
-| W16 | 论文 + Live Demo | `v1.0-final` |
-
-GitHub 时间线因此变成：
+## 仓库结构
 
 ```
-v0.1 → v0.2 → v0.3 → v0.4 → v0.5 → v0.6 → v0.7 → v1.0
+weeks/        学习过程 — W1 → W16，每周一个目录
+assignments/  阶段提交 — HW1、HW2、HW3、HW4、Final
+src/          唯一正式代码区，按 src/token_to_agent/<module>/ 组织
+tests/        单元 + 正确性测试，与 src/ 同构
+configs/      可复现实验配置
+experiments/  每次真实运行的证据（config / metrics / metadata / README）
+extensions/   课程要求之外的增量研究，按 EXT-W<N>-<idx> 编号
+docs/         系统图、论文阅读笔记、课程缘起
+artifacts/    本地产物（checkpoints / datasets / logs / traces / profiles）
+scripts/      CLI 入口（train / evaluate / benchmark / generate / serve）
 ```
 
-每个 tag 都是"那一级的完整 ladder 已经能工作"的快照，不是"只有那一级的代码合并了"。
-
----
-
-## 一句话定位
-
-> **从分词到智能体**
-
-不是营销。每一行字在仓库里都有对应代码。
-
----
+纪律：**代码积累，绝不复制**。一周写进 `src/token_to_agent/<module>/`；HW 的 `report.md` 只引用代码和实验证据，不复制任何一份。
 
 ## 快速开始
 
 ```bash
-# 装环境（脚本会建 venv + 装 torch CPU 等）
 bash scripts/setup_env.sh
 
-# 一键重跑 HW1 toy-5m（5 分钟在 Jetson CPU 上能跑完）
-.venv/bin/python scripts/make_sample_corpus.py --out data/raw/sample.txt --size-mb 1
-.venv/bin/python scripts/train.py --config configs/hw1/toy-5m.yaml
-.venv/bin/python scripts/generate.py \
-    --ckpt checkpoints/hw1/toy-5m/model.pt \
-    --tokenizer checkpoints/hw1/toy-5m/tokenizer.json \
-    --prompts-file assignments/hw1-foundations/results/prompts.txt \
-    --out assignments/hw1-foundations/results/samples.txt
+# 训练 toy 0.1B scratch baseline（smoke test，Jetson CPU 上约 5 分钟）
+PYTHONPATH=. .venv/bin/python scripts/train.py --config configs/pretrain/toy-5m.yaml
 
-# 跑 baseline-100m（需要 GPU 机器）
-.venv/bin/python scripts/train.py --config configs/hw1/baseline-100m.yaml --device cuda
+# 生成样例
+PYTHONPATH=. .venv/bin/python scripts/generate.py \
+    --ckpt artifacts/checkpoints/hw1-toy-5m/model.pt \
+    --tokenizer artifacts/checkpoints/hw1-toy-5m/tokenizer.json \
+    --prompts-file experiments/w03/exp-001-toy-baseline/prompts.txt \
+    --out experiments/w03/exp-001-toy-baseline/samples.txt
+
+# 跑所有测试
+PYTHONPATH=. .venv/bin/python tests/tokenizer/test_bpe.py
+PYTHONPATH=. .venv/bin/python tests/model/test_transformer.py
+PYTHONPATH=. .venv/bin/python tests/kernels/test_attention.py
 ```
 
-完整 reproduction 见 `assignments/hw1-foundations/README.md`。
+## 边界
 
----
-
-## 当前状态
-
-- ✅ **v0.1-hw1-foundations**（2026-09-17）：tokenizer + Transformer + 训练循环端到端跑通。Jetson CPU 上 toy-5m 验证：2.5M 参数，训练 6.43 → 2.27，val 2.26。Baseline-100m 配置已 committed，等 GPU。
-- 🚧 **HW2 Systems**：Triton attention kernel + benchmark。下一站。
-
-## 边界（这个仓库不做什么）
-
-- **不是五个孤立的课程项目**。代码积累。
-- **不是在 0.1B 模型上卷 SOTA**。HW1-3 是**理解**每一级，不是打榜。真正值得长期投入研究的地方，从 HW4 的 Verifier/RLVR 开始，到 Final 的 Environment/Harness/Evaluation/Self-Improvement。
-- **不是第一天就搭"什么都会的通用 Agent 框架"**。Final 第一版 = 一个可验证环境 + 一个 harness + 一个 agent。泛化走 Extension 路线。
-
----
-
-## 致谢与缘起
-
-课程命题来自唐杰老师大作业的 *"A Ladder That Climbs the Course"* ——
-"前一个作业产出的东西，成为后一个作业的输入"。
-
-仓库本身的研究模板（Problem → Motivation → Method → Results → Reproduction）来自那张 PPT 最底部那一行。
-
----
-
-## 项目缘起 — 2026-09-17 清华《高级机器学习》
-
-本仓库**直接是这门课的大作业**，不是独立项目。每个决策——5 级 ladder、0.1B baseline、Triton attention 必做、scaling law hold-out 预测、SFT/DPO/RLVR 同基座对照、可验证环境 + harness + 长程 agent + self-judge 收尾——都来自一个唯一来源：
-
-> **唐杰老师 — 清华大学 2026 年秋季《高级机器学习》课，2026-09-17 当堂布置。**
-
-### 作业完整内容（唐老师原话）
-
-> "把大模型全链路亲手走一遍："
-
-- 🔹 **从零写 Tokenizer + Transformer，端到端训一个 0.1B**
-- 🔹 **手写 Triton attention kernel，自己测多卡训练和推理增益**
-- 🔹 **从 raw dump 洗语料，拟合 scaling law 再外推**
-- 🔹 **同一基座上把 SFT、DPO、RLVR 做对照**
-- 🔹 **最后搭可验证环境 + harness，训长程 Agent，还鼓励 self-judge loop**
-
-### 课程节奏
-
-| 周 | 交付 |
-|---|---|
-| W1–W3 | HW1 Foundations |
-| W4–W5 | HW2 Systems |
-| W6–W7 | HW3 Data + Scaling |
-| W8 | Final Project Proposal |
-| W9–W11 | HW4 Post-Training |
-| W10 | Final Mid Report |
-| W12–W15 | FINAL Agent / Harness / Verifier |
-| W16 | **现场 demo** + NeurIPS 格式论文 |
-
-### 评分
-
-- **40%** 作业（HW1–HW4）
-- **60%** 大项目（FINAL）
-- **2–3 人组队**
-- **英文，NeurIPS 格式**
-- W16 现场 demo（live run）
-
-### 为什么"仓库本身就是作品"
-
-唐老师给这门课的核心命题是 *"A Ladder That Climbs the Course"* —— **前一个作业产出的东西，成为后一个作业的输入**。做完 16 周后，仓库本身就是作品，不是五个互不相关的课程作业。
-
-这个原则在本仓库的具体落点：
-
-- **HW1 的 Transformer** 进 `src/model/`，**HW2 不复制**它，而是在 `src/kernels/` 替换 attention 路径。
-- **HW1 的 tokenizer** 进 `src/tokenizer/`，**HW3 不重写**它，而是在同一个 module 上重训。
-- **HW3 的 base checkpoint** 被 **HW4** 直接继承。
-- **HW4 的 model** 是 **FINAL** agent 的底座。
-
-任何新的研究点（一个新 attention kernel、一种新的 data filter、一个新的 RL 算法、一种新的 self-judge 设计）**不开新 repo**，开一个 `extensions/EXT-NNN-*/`，复用 `src/`，遵循同样的研究模板。
-
-### 边界守住
-
-唐老师明确：**不要一开始就加 HW5/HW6**。HW1–HW3 的目标是**亲手掌握底层**，不是让你在 0.1B 上卷 SOTA。真正值得长期投入增量研究的地方，从 HW4 的 Verifier/RLVR 开始，到 FINAL 的 Environment/Harness/Evaluation/Self-Improvement。前半程把地基走通，后半程把仓库变成自己的研究方向。
-
-### PPT 留档
-
-> 🖼 **TODO（下一次 commit）**：把唐老师 2026-09-17 那堂课的 PPT 放到 `docs/course-origin/tang-2026-09-17-aml-ladder.pdf`，把 *"A Ladder That Climbs the Course"* 那张图单独截出来放 `docs/course-origin/slide-ladder.png`，在首页 hero 区引用。
-
----
+- **不是 16 个孤立的周项目**。代码积累；周是学习单位，不是交付单位。
+- **不是在 0.1B 上卷 SOTA**。前 7 周是**理解**每一级，不是打榜。真正值得长期投入研究的地方，从 W8 的 SFT/DPO/RLVR 开始，到 W16 的环境/harness/自评判/self-improvement。
+- **不是第一天就搭"什么都会的通用 Agent 框架"**。FINAL 第一版 = 一个可验证环境 + 一个 harness + 一个 agent。泛化走 Extension 路线。
+- **不下载预训练权重 / 不下载大数据集**。本仓库 implement-first、framework-second——机制在这里写，不去 fetch。
 
 ## License
 
-Apache 2.0
+Apache 2.0 — 见 [`LICENSE`](./LICENSE)。
+
+## 致谢
+
+本仓库是 **唐杰老师（THUDM / Z.ai）2026-09-17 在清华大学《高级机器学习》课正式布置** 的 16 周作业的作业仓库。7 级 ladder、Problem → Motivation → Method → Results 研究模板、"代码积累，绝不复制"纪律、"不加 HW5/HW6 — 走 Extension 路线"规则——都直接来自那次布置。
+
+`COURSE.md §7` 阅读列表引用 THUDM / Z.ai 一线工作（GLM-4.5 / GLM-5 / slime / ReST-MCTS* / TDRM / AgentTuning / AgentBench / ScaleCUA / INFTY）作为方向参考，不是复刻清单。

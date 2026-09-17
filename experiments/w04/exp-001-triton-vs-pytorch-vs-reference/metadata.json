@@ -1,0 +1,33 @@
+{
+  "experiment_id": "w04-exp-001",
+  "name": "triton-vs-pytorch-vs-reference",
+  "week": "W4",
+  "parent_hw": "HW2",
+  "started": "2026-09-17",
+  "status": "complete",
+  "purpose": "Forward-only attention benchmark across three backends on Jetson CPU fp32. Establishes the reference / pytorch (cuDNN/SDPA) / triton comparison for the W4 deliverable. Triton row is SKIPPED on Jetson (no CUDA); must be re-run on a GPU box.",
+  "git_commit_at_creation": "6c8eaa8",
+  "config": "configs/systems/baseline-100m-pytorch.yaml (attention section: H=12, H_kv=4, D=64)",
+  "shape": {
+    "B_range": [1, 4],
+    "H": 12,
+    "H_kv": 4,
+    "T_range": [64, 128, 256],
+    "D": 64
+  },
+  "data": "synthetic random tensors (torch.randn)",
+  "hardware": {
+    "host": "Jetson Nano",
+    "cpu": "ARMv8",
+    "gpu": "none"
+  },
+  "result_summary": {
+    "B_1_T_64": {"reference_ms": 5.484, "pytorch_ms": 1.671, "speedup": 3.28, "max_abs_err": 1.49e-7},
+    "B_1_T_128": {"reference_ms": 8.487, "pytorch_ms": 4.048, "speedup": 2.10, "max_abs_err": 1.19e-7},
+    "B_1_T_256": {"reference_ms": 26.404, "pytorch_ms": 13.138, "speedup": 2.01, "max_abs_err": 1.34e-7},
+    "B_4_T_64": {"reference_ms": 18.299, "pytorch_ms": 4.415, "speedup": 4.14, "max_abs_err": 1.19e-7},
+    "B_4_T_128": {"reference_ms": 28.975, "pytorch_ms": 19.818, "speedup": 1.46, "max_abs_err": 1.34e-7},
+    "B_4_T_256": {"reference_ms": 83.408, "pytorch_ms": 49.585, "speedup": 1.68, "max_abs_err": 1.34e-7}
+  },
+  "artifacts": ["benchmark-cpu.csv", "benchmark-cpu.json"]
+}

@@ -1,33 +1,45 @@
-# checkpoints are huge, never commit
-checkpoints/
-data/raw/
-data/processed/
-*.pt
-*.bin
-*.safetensors
+# Large/local artifacts
+artifacts/checkpoints/*
+artifacts/datasets/*
+artifacts/logs/*
+artifacts/traces/*
+artifacts/profiles/*
 
-# python
+# Keep directories visible on GitHub
+!artifacts/**/.gitkeep
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .venv/
 venv/
+ENV/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
-# logs / temp
-*.log
-logs/
-*.tmp
-.tmp/
+# Experiment trackers
+wandb/
+mlruns/
+*.dvc
 
-# env / secrets
+# Local env / secrets
 .env
-config.yaml
-*.local.yaml
+.env.*
+config.local.yaml
 
-# editor
+# IDE / editor
 .vscode/
 .idea/
 *.swp
-
-# OS
+*.swo
 .DS_Store
 Thumbs.db
+
+# Build / dist
+build/
+dist/
+*.egg-info/
+*.egg.venv/

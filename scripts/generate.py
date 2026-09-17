@@ -1,12 +1,12 @@
-"""CLI entry: generate samples from a trained checkpoint.
+"""CLI entry: generate samples from a trained checkpoint (used by W3, W4 verification).
 
 Usage:
-    python scripts/generate.py \
-        --ckpt checkpoints/hw1/toy-5m/model.pt \
-        --tokenizer checkpoints/hw1/toy-5m/tokenizer.json \
-        --prompts-file assignments/hw1-foundations/results/prompts.txt \
-        --out assignments/hw1-foundations/results/samples.txt \
-        --max-tokens 200
+    PYTHONPATH=src python scripts/generate.py \
+        --ckpt artifacts/checkpoints/hw1-toy-5m/model.pt \
+        --tokenizer artifacts/checkpoints/hw1-toy-5m/tokenizer.json \
+        --prompts-file experiments/w03/exp-001-toy-baseline/prompts.txt \
+        --out experiments/w03/exp-001-toy-baseline/samples.txt \
+        --max-tokens 150
 """
 
 from __future__ import annotations
@@ -15,15 +15,15 @@ import argparse
 import sys
 from pathlib import Path
 
-# Make `src/` importable regardless of CWD.
 _repo_root = Path(__file__).resolve().parents[1]
-if str(_repo_root) not in sys.path:
-    sys.path.insert(0, str(_repo_root))
+for p in (str(_repo_root), str(_repo_root / "src")):
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 import torch
 
-from src.model import TransformerConfig, TransformerLM
-from src.tokenizer.bpe import BPETokenizer
+from src.token_to_agent.tokenizer.bpe import BPETokenizer
+from src.token_to_agent.model import TransformerConfig, TransformerLM
 
 
 def main() -> int:
@@ -47,8 +47,11 @@ def main() -> int:
     model = TransformerLM(cfg)
     model.load_state_dict(ckpt["model_state"])
     model.eval()
-    print(f"[gen] loaded model: {cfg.vocab_size} vocab, d_model={cfg.d_model}, "
-          f"layers={cfg.n_layers}, heads={cfg.n_heads}, kv_heads={cfg.n_kv_heads}")
+    print(
+        f"[gen] loaded model: vocab={cfg.vocab_size}, d_model={cfg.d_model}, "
+        f"layers={cfg.n_layers}, heads={cfg.n_heads}/{cfg.n_kv_heads}, "
+        f"attn_backend={cfg.attn_backend}"
+    )
 
     prompts = Path(args.prompts_file).read_text(encoding="utf-8").splitlines()
     prompts = [p for p in prompts if p.strip()]
@@ -58,8 +61,10 @@ def main() -> int:
         f"# max_tokens={args.max_tokens}, temperature={args.temperature}, "
         f"top_k={args.top_k}, top_p={args.top_p}, use_cache={not args.no_cache}"
     )
-    out_lines.append(f"# model: {cfg.n_layers}L x {cfg.d_model}d, "
-                     f"{cfg.n_heads}H/{cfg.n_kv_heads}KV, vocab={cfg.vocab_size}")
+    out_lines.append(
+        f"# model: {cfg.n_layers}L x {cfg.d_model}d, "
+        f"{cfg.n_heads}H/{cfg.n_kv_heads}KV, vocab={cfg.vocab_size}"
+    )
     out_lines.append("")
 
     for i, prompt in enumerate(prompts, 1):
@@ -76,7 +81,6 @@ def main() -> int:
             use_cache=not args.no_cache,
         )
         full_ids = out[0].tolist()
-        # Decode everything (including the prompt).
         text = tok.decode(full_ids)
         out_lines.append(f"[p{i}] PROMPT: {prompt}")
         out_lines.append(f"[p{i}] FULL  : {text}")

@@ -11,8 +11,6 @@ cd "$REPO_ROOT"
 PYTHON_VERSION="${PYTHON_VERSION:-3.12}"
 
 echo "[setup] repo: $REPO_ROOT"
-
-# Mirror
 export UV_INDEX_URL="${UV_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}"
 
 if [[ ! -d ".venv" ]]; then
@@ -22,13 +20,16 @@ else
   echo "[setup] venv exists"
 fi
 
-# Bootstrap pip
 .venv/bin/python -m ensurepip --upgrade >/dev/null 2>&1 || true
 
-# Install torch + minimal deps (CPU-only on Jetson, no CUDA available).
-# --only-binary=:all: forces wheels (avoids source build / cmake failures).
+# CPU-only torch + minimal deps. --only-binary=:all: forces wheels
+# (avoids source-build / cmake failures on Jetson / constrained Linux).
 .venv/bin/python -m pip install --upgrade --only-binary=:all: pip setuptools wheel
 .venv/bin/python -m pip install --only-binary=:all: torch pyyaml pandas matplotlib numpy
 
-# Make `python` and `pip` resolve inside the venv for convenience.
-echo "[setup] done. Activate with: source .venv/bin/activate"
+# Reminder for users: PYTHONPATH=. is required for `from src.token_to_agent.* import ...`
+echo
+echo "[setup] done."
+echo "        Activate with:    source .venv/bin/activate"
+echo "        Run scripts with: PYTHONPATH=. .venv/bin/python scripts/<name>.py"
+echo "        Run tests with:   PYTHONPATH=. .venv/bin/python tests/<...>/test_<...>.py"
