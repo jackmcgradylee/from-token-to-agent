@@ -2,6 +2,8 @@
 
 > **From raw text to autonomous agents — building the modern LLM stack from scratch: tokenization, training, systems, scaling, post-training, RLVR, harnesses, and agents.**
 
+> 🌐 **Languages**: [English](./README.md) · [简体中文](./README.zh-CN.md)
+
 This repository is a single, continuously growing LLM research codebase. Every assignment builds on the previous one's output. The 5 formal assignments form the spine; everything else hangs off as numbered extensions.
 
 ```
@@ -141,3 +143,11 @@ See `assignments/hw1-foundations/README.md` for the full reproduction recipe.
 - **Not five isolated course projects.** Code accumulates.
 - **Not chasing SOTA on 0.1B.** The first 3 stages are about *understanding*, not *winning*. Real research payoff starts at HW4 (RLVR) and the Final (environment / harness / eval).
 - **Not "yet another Agent framework".** First version of FINAL is one verifiable environment + one harness + one agent. Generalization comes from extensions.
+
+---
+
+## Course origin & acknowledgements
+
+The "ladder" structure, the 5-assignment spine, the **Problem → Motivation → Method → Results → Reproduction** research template, the *"A Ladder That Climbs the Course"* framing on the PPT footer, and the "code accumulates, never duplicates" discipline are direct extensions of a course assignment by **Prof. Jie Tang (唐杰)** and team. Every choice here — keep HW1–3 small, push the research payoff to HW4 and beyond, force extensions to share code with their parent HW — follows the same boundary the original assignment drew.
+
+See [README.zh-CN.md](./README.zh-CN.md) for the Chinese-language version.
