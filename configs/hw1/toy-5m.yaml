@@ -1,0 +1,48 @@
+# HW1 toy config — small enough to train on Jetson CPU in <1 minute.
+# Full baseline-100m config is configs/hw1/baseline-100m.yaml.
+
+# Model
+model:
+  vocab_size: 2048        # overridden by tokenizer seed at training time
+  d_model: 256
+  n_layers: 4
+  n_heads: 4
+  n_kv_heads: 2           # GQA: each KV shared by 2 Q heads
+  d_ff: 512               # SwiGLU hidden dim
+  max_seq_len: 128
+  rope_theta: 10000.0
+  dropout: 0.0
+  init_std: 0.02
+  tie_word_embeddings: true
+
+# Tokenizer
+tokenizer:
+  vocab_size: 2048
+  min_pair_freq: 2
+
+# Data (relative to repo root)
+data:
+  path: data/raw/sample.txt   # create via scripts/make_sample_corpus.py
+
+# Training
+training:
+  lr: 3.0e-4
+  min_lr_ratio: 0.1
+  warmup_steps: 30
+  weight_decay: 0.1
+  grad_clip: 1.0
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1.0e-8
+  batch_size: 4
+  grad_accum: 2
+  max_steps: 200
+  log_every: 20
+  eval_every: 100
+  val_size: 2000
+  precision: fp32
+  seed: 42
+
+# Output
+ckpt_dir: checkpoints/hw1/toy-5m
+log_csv: loss_curve.csv

@@ -1,0 +1,18 @@
+# Generated samples
+# max_tokens=150, temperature=0.8, top_k=None, top_p=None, use_cache=True
+# model: 4L x 256d, 4H/2KV, vocab=559
+
+[p1] PROMPT: Once upon a time, there was a little girl named Lily.
+[p1] FULL  : Once upon a time, there was a little girl named Lily. x new time, a in  village.  the smiling. friends that prince girl C went E and castle. asleep the the Soon ever princess the went in Without found heard the and When R Tom The a friend hidden the and the was the a a ever morning, smiling. and
+
+[p2] PROMPT: The quick brown fox
+[p2] FULL  : The quick brown fox dinner.smiling. after, the sea. a river. red in learned the was Happily, a dragon morning, tree. beginning. smiling. after, friend in small the and tree. Quietly, dinner. in the red cave. the just the voice warning, bird the in Later something a in learned forest. then, and mountain. the a just the Soon next forever. that� 
+
+[p3] PROMPT: In a small village by the sea,
+[p3] FULL  : In a small village by the sea, after, a smiling. hidden home that in a  lost found �tree. and wonderful something Happily, wizard The time, dinner. learned the Without home a the that next the by beginning. and the that a then, something word a and the door girl the the home mountain. the that saw the the in the boy the
+
+[p4] PROMPT: One day, a tiny rabbit
+[p4] FULL  : One day, a tiny rabbit the learned a met discovered the just fox wonderful smiling. the that a and Tom word by a word for Suddenly, dragon that went a warning, learned a and soft became in a hidden red best liv in the sea.  just small the the the dinner. that in important. learned � The and a And the and the 
+
+[p5] PROMPT: Tom and his friend went to
+[p5] FULL  : Tom and his friend went to and the and fox the a  by light and asleep boy � magic light best the new in ever by dinner. and fell warning, the  garden. sun When something friends a the a home a her was in under the birdfox the made and the the the forever. cave. the knight a asleep word � tiny

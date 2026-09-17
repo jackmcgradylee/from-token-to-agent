@@ -1,0 +1,33 @@
+# checkpoints are huge, never commit
+checkpoints/
+data/raw/
+data/processed/
+*.pt
+*.bin
+*.safetensors
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# logs / temp
+*.log
+logs/
+*.tmp
+.tmp/
+
+# env / secrets
+.env
+config.yaml
+*.local.yaml
+
+# editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
