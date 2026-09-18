@@ -45,15 +45,31 @@ Each rung = signal gets cheaper to produce, humans exit one more loop.
 
 | Stage | Status | Milestone |
 |---|---|---|
-| HW1 Foundations | 🟡 in progress | toy-5m smoke done, scaling to baseline-100m |
-| HW2 Systems | 🟡 in progress | Triton attention kernel + benchmark |
-| HW3 Data + Scaling | ⚪ not started | W6 |
-| HW4 Post-Training | ⚪ not started | W8 |
-| Final Agent | ⚪ not started | proposal starts W8 |
+| **HW1 Foundations** — implement Tokenizer + Transformer from scratch, end-to-end train ~0.1B | 🟡 in progress | toy-5m smoke done, scaling to baseline-100m |
+| **HW2 Systems** — hand-write Triton Attention Kernel, benchmark train / inference / multi-GPU | 🟡 in progress | Triton attention kernel + benchmark |
+| **HW3 Data + Scaling** — build Corpus from Raw Dump, fit Scaling Law and verify extrapolation | ⚪ not started | W6 |
+| **HW4 Post-Training** — compare SFT / DPO / RLVR on same Base Model, extend to Agent RL | ⚪ not started | W8 |
+| **Final Project** — Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | ⚪ not started | proposal starts W8 |
 
 **Currently at**: W4 — compute kernels & parallelism.
 
 See [ROADMAP.md](./ROADMAP.md).
+
+---
+
+## 5 assignments ↔ 16 weeks
+
+The course walks **5 assignments** through **16 weeks** with a 1-to-1 mapping:
+
+| Assignment | Weeks | Topic | Core deliverable |
+|---|---|---|---|
+| **HW1 Foundations** | W1 – W3 | Three paradigm shifts / Decoder-only Transformer / Training dynamics & scaling | Tokenizer + Transformer + Training Loop + ~0.1B Pretraining + Architecture Ablation |
+| **HW2 Systems** | W4 – W5 | Compute / Kernels / Parallelism / Inference economics | Triton Kernel + Multi-GPU + Serving Benchmark + Inference Cost |
+| **HW3 Data + Scaling** | W6 – W7 | Pretraining data / Synthetic data & governance / Scaling Law extrapolation | Raw Pipeline + Data Card + Synthetic + Scaling Law + Held-out Prediction |
+| **HW4 Post-Training** | W8 – W11 | SFT & distillation / Preference / RLVR / Agent RL long-horizon | SFT + DPO + RLVR + Agentic Extension (same Base / same Eval / same Cost) |
+| **Final Project** | W8 – W16 | Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | Proposal (W8) → Mid Report (W10) → Final Paper + Live Demo (W16) |
+
+Milestone submission view: [`assignments/`](./assignments/). Weekly learning notes: [`weeks/`](./weeks/).
 
 ---
 

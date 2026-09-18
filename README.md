@@ -45,15 +45,31 @@ self-judge          ←  W14-W16 自评判 / 轨迹蒸馏 / 长程自治
 
 | 阶段 | 状态 | 里程碑 |
 |---|---|---|
-| HW1 Foundations | 🟡 in progress | toy-5m 跑通，正在替换为 baseline-100m |
-| HW2 Systems | 🟡 in progress | Triton attention kernel + benchmark |
-| HW3 Data + Scaling | ⚪ not started | W6 开工 |
-| HW4 Post-Training | ⚪ not started | W8 开工 |
-| Final Agent | ⚪ not started | W8 启动 proposal |
+| **HW1 Foundations** — 从零实现 Tokenizer + Transformer，端到端训练约 0.1B 模型 | 🟡 in progress | toy-5m 跑通，正在替换为 baseline-100m |
+| **HW2 Systems** — 手写 Triton Attention Kernel，测试训练 / 推理 / 多卡收益 | 🟡 in progress | Triton attention kernel + benchmark |
+| **HW3 Data + Scaling** — 从 Raw Dump 构建 Corpus，拟合 Scaling Law 并验证外推 | ⚪ not started | W6 开工 |
+| **HW4 Post-Training** — 在同一 Base Model 比较 SFT / DPO / RLVR，并扩展 Agent RL | ⚪ not started | W8 开工 |
+| **Final Project** — Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | ⚪ not started | W8 启动 proposal |
 
 **当前进行**：W4 — compute kernels & parallelism。
 
 详见 [ROADMAP.md](./ROADMAP.md)。
+
+---
+
+## 5 个正式作业 ↔ 16 周课程
+
+这门课用 **5 个作业**走完 **16 周**，两者一一对应：
+
+| 作业 | 周次 | 主题 | 核心交付 |
+|---|---|---|---|
+| **HW1 Foundations** | W1 – W3 | 三次范式转移 / Decoder-only Transformer / 训练动力学与 Scaling | Tokenizer + Transformer + Training Loop + ~0.1B Pretraining + Architecture Ablation |
+| **HW2 Systems** | W4 – W5 | 计算 / 内核 / 并行 / 推理经济学 | Triton Kernel + Multi-GPU + Serving Benchmark + Inference Cost |
+| **HW3 Data + Scaling** | W6 – W7 | 预训练数据 / 合成数据与治理 / Scaling Law 外推 | Raw Pipeline + Data Card + Synthetic + Scaling Law + Held-out Prediction |
+| **HW4 Post-Training** | W8 – W11 | SFT 与蒸馏 / Preference / RLVR / Agent RL 长程 | SFT + DPO + RLVR + Agentic Extension（同 Base / 同 Eval / 同成本口径） |
+| **Final Project** | W8 – W16 | Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | Proposal (W8) → Mid Report (W10) → Final Paper + Live Demo (W16) |
+
+每个作业的 milestone 视图见 [`assignments/`](./assignments/)；每周的学习笔记见 [`weeks/`](./weeks/)。
 
 ---
 
