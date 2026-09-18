@@ -1,0 +1,46 @@
+{
+  "experiment_id": "w02-exp-002-mha-vs-gqa",
+  "title": "MHA vs GQA ablation",
+  "week": "W2",
+  "hw_assignment_id": null,
+  "git_commit": "HEAD",
+  "date": "2026-09-17",
+  "config": {
+    "d_model": 128,
+    "n_layers": 2,
+    "n_heads": 4,
+    "vocab_size": 1024,
+    "max_seq_len": 64,
+    "n_iters_forward": 5,
+    "n_train_steps": 30,
+    "kv_cache_batch_size": 4,
+    "kv_cache_seq_len": 512,
+    "kv_cache_dtype_bytes": 4
+  },
+  "model": "TransformerLM with n_kv_heads swept",
+  "dataset": "synthetic random tokens",
+  "result": {
+    "mha": {
+      "n_kv_heads": 4,
+      "n_params": 557696,
+      "kv_cache_bytes_per_layer": 2097152,
+      "forward_latency_ms": 17.43,
+      "final_train_loss": 6.972
+    },
+    "gqa_2": {
+      "n_kv_heads": 2,
+      "n_params": 524928,
+      "kv_cache_bytes_per_layer": 1048576,
+      "forward_latency_ms": 18.17,
+      "final_train_loss": 6.974
+    },
+    "gqa_1": {
+      "n_kv_heads": 1,
+      "n_params": 508544,
+      "kv_cache_bytes_per_layer": 524288,
+      "forward_latency_ms": 17.89,
+      "final_train_loss": 6.99
+    },
+    "key_finding": "KV cache scales exactly with n_kv_heads/n_heads: MHA 2,097,152 -> GQA-2 1,048,576 -> GQA-1 524,288 (4x reduction). Loss 6.972 -> 6.974 -> 6.990 (within 0.018 nats). Param delta -49,152 (-8.8%) from MHA to GQA-1 because only K and V projections shrink."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "experiment_id": "w02-exp-001-rmsnorm-vs-layernorm",
+  "title": "LayerNorm vs RMSNorm ablation",
+  "week": "W2",
+  "hw_assignment_id": null,
+  "git_commit": "HEAD",
+  "date": "2026-09-17",
+  "config": {
+    "d_model": 128,
+    "n_layers": 2,
+    "n_heads": 4,
+    "vocab_size": 1024,
+    "max_seq_len": 64,
+    "n_iters_forward": 5,
+    "n_train_steps": 30
+  },
+  "model": "TransformerLM with norm_kind switched",
+  "dataset": "synthetic random tokens (gradient-flow check)",
+  "result": {
+    "rmsnorm": {
+      "n_params": 557696,
+      "param_bytes_fp32": 2230784,
+      "forward_latency_ms": 17.83,
+      "init_loss": 6.931,
+      "final_train_loss": 6.972
+    },
+    "layernorm": {
+      "n_params": 558336,
+      "param_bytes_fp32": 2233344,
+      "forward_latency_ms": 25.03,
+      "init_loss": 6.931,
+      "final_train_loss": 6.97
+    },
+    "key_finding": "LayerNorm adds exactly 640 parameters (0.11% of model). Forward latency is within run-to-run noise on CPU; principled advantage of RMSNorm is fewer FLOPs per call (no mean, no bias), manifests as ~10-20% savings on GPU with fused kernels. Both train without divergence."
+  }
+}

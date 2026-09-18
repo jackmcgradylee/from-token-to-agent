@@ -12,8 +12,17 @@ import torch.nn.functional as F
 
 from .attention import Attention, KVCache
 from .rmsnorm import RMSNorm
+from .layernorm import LayerNorm
 from .rope import precompute_rope_cache
 from .swiglu import SwiGLU
+
+
+def _build_norm(kind: str, dim: int, eps: float) -> nn.Module:
+    if kind == "rmsnorm":
+        return RMSNorm(dim, eps=eps)
+    if kind == "layernorm":
+        return LayerNorm(dim, eps=eps)
+    raise ValueError(f"unknown norm_kind: {kind!r}; expected 'rmsnorm' or 'layernorm'")
 
 
 @dataclass
@@ -29,6 +38,7 @@ class TransformerConfig:
     rope_theta: float = 10000.0
     dropout: float = 0.0
     norm_eps: float = 1e-6
+    norm_kind: str = "rmsnorm"  # "rmsnorm" (default) | "layernorm"
     init_std: float = 0.02
     tie_word_embeddings: bool = True
     attn_backend: str = "pytorch"  # "pytorch" | "triton" | "reference"
@@ -37,7 +47,7 @@ class TransformerConfig:
 class TransformerBlock(nn.Module):
     def __init__(self, cfg: TransformerConfig):
         super().__init__()
-        self.ln1 = RMSNorm(cfg.d_model, eps=cfg.norm_eps)
+        self.ln1 = _build_norm(cfg.norm_kind, cfg.d_model, cfg.norm_eps)
         self.attn = Attention(
             d_model=cfg.d_model,
             n_heads=cfg.n_heads,
@@ -47,7 +57,7 @@ class TransformerBlock(nn.Module):
             rope_theta=cfg.rope_theta,
             dropout=cfg.dropout,
         )
-        self.ln2 = RMSNorm(cfg.d_model, eps=cfg.norm_eps)
+        self.ln2 = _build_norm(cfg.norm_kind, cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg.d_model, hidden_dim=cfg.d_ff)
 
     def forward(
@@ -74,7 +84,7 @@ class TransformerLM(nn.Module):
 
         self.token_emb = nn.Embedding(cfg.vocab_size, cfg.d_model)
         self.blocks = nn.ModuleList([TransformerBlock(cfg) for _ in range(cfg.n_layers)])
-        self.ln_f = RMSNorm(cfg.d_model, eps=cfg.norm_eps)
+        self.ln_f = _build_norm(cfg.norm_kind, cfg.d_model, cfg.norm_eps)
 
         # Tied LM head: share weights with token_emb.
         # (Linear weight = token_emb.weight, with no bias.)

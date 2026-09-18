@@ -1,0 +1,23 @@
+{
+  "log_vocab": 6.931471805599453,
+  "train_steps": 30,
+  "wall_clock_seconds": 11.07436752319336,
+  "results": [
+    {
+      "norm_kind": "rmsnorm",
+      "n_params": 557696,
+      "param_bytes": 2230784,
+      "forward_latency_ms": 17.832861200440675,
+      "final_train_loss": 6.972273826599121,
+      "trained_from": 6.931214332580566
+    },
+    {
+      "norm_kind": "layernorm",
+      "n_params": 558336,
+      "param_bytes": 2233344,
+      "forward_latency_ms": 25.034581001091283,
+      "final_train_loss": 6.970304012298584,
+      "trained_from": 6.931186676025391
+    }
+  ]
+}

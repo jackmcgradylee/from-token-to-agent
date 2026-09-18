@@ -1,0 +1,42 @@
+{
+  "d_model": 128,
+  "n_layers": 2,
+  "n_heads": 4,
+  "n_kv_mid": 2,
+  "n_kv_small": 1,
+  "log_vocab": 6.931471805599453,
+  "train_steps": 30,
+  "wall_clock_seconds": 14.364678859710693,
+  "results": [
+    {
+      "n_heads": 4,
+      "n_kv_heads": 4,
+      "label": "MHA",
+      "n_params": 557696,
+      "param_bytes": 2230784,
+      "kv_cache_bytes_per_layer": 2097152,
+      "forward_latency_ms": 18.084182200254872,
+      "final_train_loss": 6.972273826599121
+    },
+    {
+      "n_heads": 4,
+      "n_kv_heads": 2,
+      "label": "GQA-2",
+      "n_params": 524928,
+      "param_bytes": 2099712,
+      "kv_cache_bytes_per_layer": 1048576,
+      "forward_latency_ms": 18.191998201655224,
+      "final_train_loss": 6.974028587341309
+    },
+    {
+      "n_heads": 4,
+      "n_kv_heads": 1,
+      "label": "GQA-1",
+      "n_params": 508544,
+      "param_bytes": 2034176,
+      "kv_cache_bytes_per_layer": 524288,
+      "forward_latency_ms": 26.13814399956027,
+      "final_train_loss": 6.990467071533203
+    }
+  ]
+}
