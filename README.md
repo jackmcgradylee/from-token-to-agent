@@ -97,21 +97,22 @@ W16 What Comes After LLMs?
 
 ## 当前进度
 
-**Current: W2 — Architecture Revisited (RMSNorm + GQA ablations done)**
+**Current: W3 — Training Dynamics & Scaling Laws (5-point scaling pilot in progress)**
 
 | 作业 | 状态 |
 | --- | --- |
-| **HW1 Foundations** | 🟢 完成（W1 tokenizers + EXT-W1-01 BPE vocab sweep） |
+| **HW1 Foundations** | 🟢 完成（W1 tokenizers + W3 scaling pilot + EXT-W1-01） |
 | **HW2 Systems** | 🟠 实现完成，ablation 已交付（W2 RMSNorm/GQA + W4 Triton 起步） |
-| **HW3 Data + Scaling** | ⚪ 未开始（W6） |
+| **HW3 Data + Scaling** | 🔜 计划（W6 起，scaling pilot 已预热） |
 | **HW4 Post-Training** | ⚪ 未开始（W8） |
 | **Final Project** | ⚪ 未开始（W8 启动 proposal） |
 
 **最近进展**
 
+- ✅ **W3 scaling pilot** — 5 个 iso-data pilot (1.6M / 3.6M / 6.9M / 15.3M / 33.4M params)，同 1MB corpus + 100 步 + 同 lr schedule。前两点 val_loss 4.15 → 3.74（Δ=−0.41，N×2.2）。Shared harness `_common.py` + 5 个 thin runner + grid-search hold-out 拟合 (`exp-007`) 全部就位。
 - ✅ **EXT-W1-01** — BPE vocab sweep: 在 21 KB toy corpus 上饱和于 `actual_vocab=530`，target ≥ 1024 时 trainer 提前终止，bytes/token 冻结在 1.214。
 - ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm（参数差 +640）+ MHA vs GQA（KV cache 4× shrink），59/59 tests PASS。
-- 🔜 **W3** — Training dynamics + scaling law hold-out 预测实验。
+- ✅ **`docs/scaling-law.md`** — W3 文本 deliverable 完成，明确写出 4 个边界条件（100 步不收敛、1MB corpus 太短、vocab 没归一化、不是 Chinchilla）。
 
 详细实验、扩展与下一步计划见 [`ROADMAP.md`](./ROADMAP.md)。
 
@@ -156,6 +157,10 @@ python scripts/train.py --config configs/pretrain/toy-5m.yaml
 
 # HW1 正式 baseline（约 100M，需要 GPU）
 python scripts/train.py --config configs/pretrain/baseline-100m.yaml
+
+# W3 scaling pilot — 5 个模型 iso-data sweep + power-law hold-out
+# （CPU 即可，约 40 分钟）
+bash scripts/run_w3_sweep.sh
 
 # 用 checkpoint 生成
 python scripts/generate.py --checkpoint artifacts/checkpoints/toy-5m --prompt "你好"

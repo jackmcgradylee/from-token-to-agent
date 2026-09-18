@@ -96,20 +96,22 @@ Milestone submission view: [`assignments/`](./assignments/).
 
 ## Current progress
 
-**Current: W2 — Architecture Revisited (RMSNorm + GQA ablations done)**
+**Current: W3 — Training Dynamics & Scaling Laws (5-point scaling pilot in progress)**
 
 | Assignment | Status |
 | --- | --- |
-| **HW1 Foundations** | 🟢 complete (W1 tokenizers + EXT-W1-01 BPE vocab sweep) |
+| **HW1 Foundations** | 🟢 complete (W1 tokenizers + W3 scaling pilot + EXT-W1-01) |
 | **HW2 Systems** | 🟠 implementation done, ablations shipped (W2 RMSNorm/GQA + W4 Triton started) |
-| **HW3 Data + Scaling** | ⚪ not started (W6) |
+| **HW3 Data + Scaling** | 🔜 scheduled (W6; scaling pilot warm-up already done under HW1) |
 | **HW4 Post-Training** | ⚪ not started (W8) |
 | **Final Project** | ⚪ not started (W8 proposal kickoff) |
 
 **Recent progress**
 
-- ✅ **EXT-W1-01** — BPE vocab sweep: saturates at `actual_vocab=530` on the 21 KB toy corpus. Asking for `target ≥ 1024` causes the trainer to terminate early; bytes/token freezes at 1.214.
+- ✅ **W3 scaling pilot** — 5 iso-data pilots (1.6M / 3.6M / 6.9M / 15.3M / 33.4M params), same 1 MB corpus + 100 steps + same lr schedule. First two points: val_loss 4.15 → 3.74 (Δ=−0.41, N×2.2). Shared harness `_common.py` + 5 thin runners + grid-search hold-out fit (`exp-007`) all in place.
+- ✅ **EXT-W1-01** — BPE vocab sweep: saturates at `actual_vocab=530` on the 21 KB toy corpus; `target ≥ 1024` causes the trainer to terminate early; bytes/token freezes at 1.214.
 - ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm (+640 params) + MHA vs GQA (4× KV cache shrink). 59/59 tests pass.
+- ✅ **`docs/scaling-law.md`** — W3 textbook deliverable; explicitly lists four boundary conditions (100 steps ≠ convergence, 1 MB corpus too short, vocab not normalized, not a Chinchilla reproduction).
 - 🔜 **W3** — Training dynamics + scaling-law hold-out prediction experiment.
 
 Detailed experiments, extensions, and next-step plan: [`ROADMAP.md`](./ROADMAP.md).
@@ -155,6 +157,10 @@ python scripts/train.py --config configs/pretrain/toy-5m.yaml
 
 # HW1 baseline (~100M, needs a GPU host)
 python scripts/train.py --config configs/pretrain/baseline-100m.yaml
+
+# W3 scaling pilot — 5 iso-data models + power-law hold-out prediction
+# (CPU-feasible; ~40 minutes on Jetson Nano)
+bash scripts/run_w3_sweep.sh
 
 # Generate from a checkpoint
 python scripts/generate.py --checkpoint artifacts/checkpoints/toy-5m --prompt "你好"

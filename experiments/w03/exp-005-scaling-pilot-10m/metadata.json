@@ -1,0 +1,14 @@
+{
+  "target_params": 14891008,
+  "actual_params": 14891008,
+  "config_path": "/home/jetbot/project/llm-from-scratch-to-agent/configs/hw1/scaling-10m.yaml",
+  "final_train_loss": 3.0692285537719726,
+  "final_val_loss": 3.0527318815658036,
+  "tokens_per_sec_avg": 117.90842062750895,
+  "peak_mem_mb": 0,
+  "wall_seconds": 603.9577965736389,
+  "steps": 100,
+  "ckpt_dir": "checkpoints/w3/scaling-10m",
+  "loss_csv_path": "/home/jetbot/project/llm-from-scratch-to-agent/experiments/w03/exp-005-scaling-pilot-10m/loss_curve.csv",
+  "samples_path": "/home/jetbot/project/llm-from-scratch-to-agent/experiments/w03/exp-005-scaling-pilot-10m/samples.txt"
+}

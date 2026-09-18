@@ -1,0 +1,32 @@
+{
+  "model": "L(N) = L_inf + a * N^(-alpha)",
+  "fit_points": [
+    {
+      "label": "1m",
+      "n_params": 1642496,
+      "val_loss": 4.149536493689793
+    },
+    {
+      "label": "2_5m",
+      "n_params": 3590400,
+      "val_loss": 3.7408971889321054
+    },
+    {
+      "label": "5m",
+      "n_params": 6595584,
+      "val_loss": 3.453770324547657
+    },
+    {
+      "label": "10m",
+      "n_params": 14891008,
+      "val_loss": 3.0527318815658036
+    }
+  ],
+  "holdout_point": null,
+  "fit_params": {
+    "a": 88.02050559376023,
+    "alpha": 0.24457790630473228,
+    "L_inf": 1.5263659407829018
+  },
+  "prediction": null
+}

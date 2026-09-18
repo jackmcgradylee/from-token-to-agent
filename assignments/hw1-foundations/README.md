@@ -18,7 +18,7 @@ pre-trained checkpoint?* Everything in HW1 lives in
 | --- | --- | --- |
 | **W1** Three Paradigm Shifts | Char / Word / BPE tokenizer comparison + signal-ladder write-up | ✅ |
 | **W2** Architecture Revisited | RMSNorm vs LayerNorm + MHA vs GQA ablations | ✅ |
-| **W3** Training Dynamics & Scaling Laws | Toy baseline + scaling pilot (queued for next round) | 🔜 |
+| **W3** Training Dynamics & Scaling Laws | 5-point scaling pilot + power-law fit + hold-out prediction | ✅ |
 
 This README is updated incrementally as each week lands; until W3 closes,
 HW1 status is **"W1 + W2 done; W3 in progress"**.
@@ -109,11 +109,40 @@ for `target ≥ 1024` produces no additional merges — the trainer's
 
 Full write-up: [`extensions/w01/ext-w1-01-bpe-vocab-sweep/README.md`](../../extensions/w01/ext-w1-01-bpe-vocab-sweep/README.md).
 
-### 🔜 W3 — training dynamics + scaling-law hold-out (next)
+### ✅ W3 — scaling pilot + power-law hold-out prediction
 
-The hold-out structure for HW3 is sketched in `experiments/w03/exp-001-toy-baseline/`
-(only smoke baseline exists today). Following rounds will add the
-scaling-law pilots at 20M / 50M / 100M, then the W4 Triton kernel pass.
+Five iso-data scaling pilots with `d_model × n_layers` swept log-spaced
+across one and a half orders of magnitude in N:
+
+| Pilot | Target N | Actual N | d_model | n_layers | val_loss @ step 100 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1m | 1M | 1,642,496 | 128 | 8 | 4.1495 |
+| 2_5m | 2.5M | 3,590,400 | 160 | 12 | 3.7409 |
+| 5m | 5M | 6,887,616 | 192 | 16 | (see results) |
+| 10m | 10M | 15,280,384 | 256 | 20 | (see results) |
+| 20m | 20M | 33,359,680 | 320 | 28 | (see results) |
+
+All five share: same 1 MB toy corpus (`data/raw/sample.txt`), same
+byte-level BPE vocab (560 merges), same lr schedule (3e-4 peak →
+cosine to 3e-5 with 20-step warmup), same AdamW (β=0.9/0.95), same
+effective batch 8, same seed=42, 100 training steps. The sweep is
+**iso-data** (D fixed), not iso-compute — a deliberate simplification
+that lets us attribute loss differences to capacity alone.
+
+The hold-out test (`experiments/w03/exp-007-scaling-law-fit/`) fits
+`L(N) = L_inf + a · N^(-α)` on {1M, 2.5M, 5M, 10M} by 1-D grid search
+over `L_inf` with closed-form OLS for `a, α`, then predicts the 20M
+point. The relative prediction error is the honest measurement of
+whether the W3 sweep actually behaves like a power law.
+
+Implementation:
+
+- Shared harness: [`experiments/w03/_common.py`](../../experiments/w03/_common.py) — one `run_scaling_pilot(config, output_dir)` that every pilot's `runner.py` calls.
+- Five configs: [`configs/hw1/scaling-{1m,2_5m,5m,10m,20m}.yaml`](../../configs/hw1/).
+- Corpus generator: [`scripts/make_sample_corpus.py`](../../scripts/make_sample_corpus.py) — deterministic 1 MB TinyStories-style text (seed=42).
+- Five pilot folders with their own `runner.py`, `loss_curve.csv`, `metadata.json`, `samples.txt`, `loss_curve.png` under [`experiments/w03/`](../../experiments/w03/).
+
+See [`experiments/w03/exp-007-scaling-law-fit/results/fit.md`](../../experiments/w03/exp-007-scaling-law-fit/results/fit.md) for the canonical fit numbers and hold-out error. Textbook-style write-up: [`docs/scaling-law.md`](../../docs/scaling-law.md).
 
 ## Reproduction
 

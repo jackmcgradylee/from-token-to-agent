@@ -4,6 +4,7 @@ artifacts/datasets/*
 artifacts/logs/*
 artifacts/traces/*
 artifacts/profiles/*
+checkpoints/
 
 # Keep directories visible on GitHub
 !artifacts/**/.gitkeep
