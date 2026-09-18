@@ -1,8 +1,40 @@
-"""W5 — Serving stack (vLLM / SGLang) + Load Generator.
+"""systems.serving — runtime / scheduling layer for inference serving.
 
-Per COURSE §10, we measure TTFT / TPOT / P50 / P95 / cost-per-1M-tokens
-on top of a mature serving engine, plus our own Load Generator that
-sweeps concurrency / prompt length / generation length.
+- load_generator: synthetic request arrival patterns.
+- metrics_collector: per-request + aggregate latency stats.
+- simulated_engine: CPU-side mock of a vLLM-style continuous-batching
+  scheduler. Validates scheduling logic, not real forward passes.
+
+Each module is independently importable; the experiment runner glues
+them together.
 """
 
-__all__: list[str] = []
+from .metrics_collector import (
+    AggregateStats,
+    MetricsCollector,
+    RequestRecord,
+    write_summary_csv,
+    write_summary_md,
+)
+from .load_generator import (
+    Request,
+    generate_schedule,
+    schedule_summary,
+)
+from .simulated_engine import (
+    EngineConfig,
+    SimulatedEngine,
+)
+
+__all__ = [
+    "AggregateStats",
+    "MetricsCollector",
+    "RequestRecord",
+    "write_summary_csv",
+    "write_summary_md",
+    "Request",
+    "generate_schedule",
+    "schedule_summary",
+    "EngineConfig",
+    "SimulatedEngine",
+]
