@@ -1,103 +1,113 @@
-# From Token to Agent · 从分词到智能体
+# From Token to Agent · 从 Token 到智能体
 
 > **🇨🇳 中文（默认）** · [🇬🇧 English](./README.en.md)
 >
-> 从分词和预训练，到 RLVR、长程智能体、自改进——
-> 从零搭建现代 AI 栈。
+> 从 Tokenizer、预训练与 Scaling，到 RLVR、长程 Agent 与 Self-Evolution。
+> **亲手走通现代大模型从 Token 到 Agent 的完整链路。**
 
 ---
 
 ## 课程来源
 
-本仓库是 **唐杰教授 2026-09-17 在清华大学《高级机器学习》课上正式布置的作业的工作答案**。
+本仓库基于 **唐杰教授 2026-09-17 在清华大学《高级机器学习》课程中公布的 16 周课程地图与作业要求**，进行个人复现、实验与扩展。
 
-课程的核心命题只有一个，但用 16 周把它彻底走完——
+目标不是把课程压缩成几个 Demo，而是在可承受的计算规模下，尽可能完整地走一遍：
 
-> 监督信号从「人类标签」一路演化到「自评判」，技术栈只是表象。
+- Tokenization 与 Transformer
+- Pretraining 与 Scaling
+- GPU Kernel、并行训练与推理系统
+- Pretraining Data 与 Synthetic Data
+- SFT、Preference Learning 与 RLVR
+- Long-Horizon Agent RL
+- Harness、Memory 与 Continual Learning
+- Self-Evaluation、Evaluation 与 Safety
 
-那张 PPT 底部那张 "A Ladder That Climbs the Course" 的图，是整个仓库的脊柱：
+课程 PPT 给出了一条贯穿 16 周的 Learning Signal Ladder：
 
-![唐杰 2026-09-17《高级机器学习》PPT 摘录（6 张拼图：LLM 用例金字塔 / Scaling↔Generalization 时间线 / 课程导言"让机器像人一样思考" / 2026 研究优先级 / 16 周课程地图 / 历史脉络——三次范式转移，1980s→2026）](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+![课程地图（6 张拼图：LLM 用例金字塔 / Scaling↔Generalization 时间线 / 课程导言"让机器像人一样思考" / 2026 研究优先级 / 16 周课程地图 / 历史脉络——三次范式转移，1980s→2026）](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
 
-6 张幻灯片从左到右是：LLM 用例金字塔、Scaling ↔ Generalization 时间线、课程导言「让机器像人一样思考」、2026 研究优先级、**16 周课程地图**（本仓库的进度表）、以及历史脉络（三次范式转移，1980s → 2026）。
-
-完整 16 周大纲（每周交付物、通过标准、扩展规则）冻结在 [`COURSE.md`](./COURSE.md)。
+完整课程计划、每周实验与验收标准见 [`COURSE.md`](./COURSE.md)。
 
 ---
 
 ## Learning Signal Ladder
 
-```
-labels              ←  W1   监督标签：把世界压成离散 token
-word structure      ←  W1   词结构：BPE / Word / Char 的归纳偏置
-next-token          ←  W1-W7  预测下一个 token：Transformer + Scaling Law
-preferences         ←  W8-W10 SFT / DPO：人类偏好对齐
-verifiers           ←  W10-W11 RLVR / ORM / PRM：可验证奖励
-environment         ←  W12-W13 Coding Agent / Memory
-self-judge          ←  W14-W16 自评判 / 轨迹蒸馏 / 长程自治
+```text
+labels
+↓
+word structure
+↓
+next-token
+↓
+preferences
+↓
+verifiers
+↓
+environment
+↓
+self-judge
 ```
 
-每一级横档 = 信号越来越便宜、人类越来越少地介入某个回路。
+我把这条线理解为课程真正的主轴：
+
+> 学习信号从人工标注，逐渐转向数据自身、Preference、程序化 Verifier、Environment Feedback 和 Self-Evaluation；信号越来越可规模化，人也逐步退出反馈闭环。
 
 ---
 
-## 进度（截至 W5）
+## 16 周 Course Map
 
-| 阶段 | 状态 | 里程碑 |
-|---|---|---|
-| **HW1 Foundations** — 从零实现 Tokenizer + Transformer，端到端训练约 0.1B 模型 | 🟡 in progress | toy-5m 跑通，正在替换为 baseline-100m |
-| **HW2 Systems** — 手写 Triton Attention Kernel，测试训练 / 推理 / 多卡收益 | 🟡 in progress | Triton attention kernel + benchmark |
-| **HW3 Data + Scaling** — 从 Raw Dump 构建 Corpus，拟合 Scaling Law 并验证外推 | ⚪ not started | W6 开工 |
-| **HW4 Post-Training** — 在同一 Base Model 比较 SFT / DPO / RLVR，并扩展 Agent RL | ⚪ not started | W8 开工 |
-| **Final Project** — Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | ⚪ not started | W8 启动 proposal |
+```
+W1  Three Paradigm Shifts
+W2  Architecture Revisited
+W3  Training Dynamics & Scaling Laws
+W4  Compute, Kernels, Parallelism
+W5  Economics of Inference
+W6  Pretraining Data
+W7  Synthetic Data & Governance
+W8  SFT & Distillation
+W9  Preference Learning
+W10 RLVR & Reasoning
+W11 Agent RL: Long-Horizon
+W12 Agent Foundations
+W13 Memory & Continual Learning
+W14 Self-Evaluation & Evolution
+W15 Evaluation & Safety
+W16 What Comes After LLMs?
+```
 
-**当前进行**：W4 — compute kernels & parallelism。
-
-详见 [ROADMAP.md](./ROADMAP.md)。
+每周 Topic、实验与验收标准见 [`COURSE.md`](./COURSE.md)。
 
 ---
 
-## 5 个正式作业 ↔ 16 周课程
+## 5 个阶段性 Deliverables
 
-这门课用 **5 个作业**走完 **16 周**，两者一一对应：
+> 16 周 Topic 定义**学什么**，5 个正式作业定义**做出什么**。两者相互关联，但并不是严格的一周一作业映射——尤其 Final Project 从 W8 起就与 HW4 并行推进。
 
-| 作业 | 周次 | 主题 | 核心交付 |
-|---|---|---|---|
-| **HW1 Foundations** | W1 – W3 | 三次范式转移 / Decoder-only Transformer / 训练动力学与 Scaling | Tokenizer + Transformer + Training Loop + ~0.1B Pretraining + Architecture Ablation |
-| **HW2 Systems** | W4 – W5 | 计算 / 内核 / 并行 / 推理经济学 | Triton Kernel + Multi-GPU + Serving Benchmark + Inference Cost |
-| **HW3 Data + Scaling** | W6 – W7 | 预训练数据 / 合成数据与治理 / Scaling Law 外推 | Raw Pipeline + Data Card + Synthetic + Scaling Law + Held-out Prediction |
-| **HW4 Post-Training** | W8 – W11 | SFT 与蒸馏 / Preference / RLVR / Agent RL 长程 | SFT + DPO + RLVR + Agentic Extension（同 Base / 同 Eval / 同成本口径） |
-| **Final Project** | W8 – W16 | Verifiable Environment + Harness + Long-Horizon Agent + Self-Judge | Proposal (W8) → Mid Report (W10) → Final Paper + Live Demo (W16) |
+| 作业 | 主要覆盖内容 | 核心交付 |
+| --- | --- | --- |
+| **HW1 Foundations** | Tokenization / Architecture / Training | Tokenizer + Transformer + ~0.1B Pretraining + Ablation |
+| **HW2 Systems** | Kernel / Parallelism / Inference | Triton Kernel + Multi-GPU + Serving + Cost |
+| **HW3 Data + Scaling** | Pretraining Data / Synthetic Data / Scaling Law | Raw Pipeline + Data Card + Scaling Extrapolation |
+| **HW4 Post-Training** | SFT / Preference / RLVR / Agent RL | Controlled Comparison（同 Base / 同 Eval / 同成本） |
+| **Final Project** | W8 起并行贯穿后半程 | Verifiable Env + Harness + Long-Horizon Agent + Self-Judge |
 
-每个作业的 milestone 视图见 [`assignments/`](./assignments/)；每周的学习笔记见 [`weeks/`](./weeks/)。
+每个作业的 milestone 视图见 [`assignments/`](./assignments/)。
 
 ---
 
-## 这个仓库是什么
+## 当前进度
 
-**不是 4 份独立作业。** 是一条从 `raw text` 走到 `self-improving agent` 的不断升级的系统主线：
+**Current: W4 — Compute, Kernels, Parallelism**
 
-```
-raw data
-  ↓
-tokenizer (W1)
-  ↓
-0.1B base model (W2-W3)
-  ↓
-systems optimization (W4-W5)
-  ↓
-better data + scaling (W6-W7)
-  ↓
-SFT / DPO / RLVR (W8-W11)
-  ↓
-verifiable environment (W12)
-  ↓
-harness + long-horizon agent (W12-W13)
-  ↓
-self-judge + trajectory distillation (W14-W16)
-```
+| 作业 | 状态 |
+| --- | --- |
+| **HW1 Foundations** | 🟠 实现完成，report 待整理 |
+| **HW2 Systems** | 🟡 进行中（W4 attention kernel / benchmark） |
+| **HW3 Data + Scaling** | ⚪ 未开始（W6） |
+| **HW4 Post-Training** | ⚪ 未开始（W8） |
+| **Final Project** | ⚪ 未开始（W8 启动 proposal） |
 
-每一周的代码会接住上一周的产物，所以 16 周后仓库本身就是作品。
+详细实验、扩展与下一步计划见 [`ROADMAP.md`](./ROADMAP.md)。
 
 ---
 
@@ -105,46 +115,27 @@ self-judge + trajectory distillation (W14-W16)
 
 ```
 from-token-to-agent/
-├── weeks/              ★ 第一主线：16 周学习节奏（W1-W5 已建）
-├── assignments/        ★ 第二主线：作业 milestone 提交视图
-├── src/token_to_agent/ ★ 唯一正式代码区
-│   ├── from_scratch/   W1-W4 + W10 核心手写实现
-│   │   ├── tokenizer/    BPE 实现（W1）
-│   │   ├── model/        decoder-only Transformer（W2）
-│   │   ├── training/     AdamW + cosine LR + checkpoint（W3）
-│   │   ├── kernels/      Triton + reference attention（W4）
-│   │   ├── dpo/          DPO 核心 Loss（W9 教学版）
-│   │   └── rlvr/         RLVR 教学循环（W10）
-│   ├── systems/        W4-W5 框架封装
-│   │   ├── distributed/    DDP / FSDP / Megatron 封装
-│   │   ├── serving/        vLLM / SGLang client + Load Generator
-│   │   └── profiling/      kernel breakdown + arithmetic intensity
-│   ├── data/           W6-W7 Raw pipeline + Synthetic Data Factory
-│   ├── post_training/  W8-W11 规模训练（TRL / slime / verl 包装）
-│   │   ├── sft/            SFT runner
-│   │   ├── preference/     DPO scale runner
-│   │   └── rl/             RLVR + Agent RL runner
-│   ├── agent/          W12-W16 手写智能体栈
-│   │   ├── harness/        最小 Harness（Parser / Context / Retry / Budget / Sandbox）
-│   │   ├── environments/   Verifiable Coding Agent 环境
-│   │   ├── tools/          Tool schemas + parsers
-│   │   ├── memory/         Working / Episodic / Procedural
-│   │   └── self_eval/      Self-Judge + Calibration
-│   └── evaluation/     HW4 + FINAL 统一评测矩阵
-├── tests/              按模块划分
-├── configs/            训练 / 系统 / 后训练 / agent 配置
-├── experiments/        每实验 5 件套：config + metadata + metrics + README
-├── extensions/         主线之外的增量实验（EXT-W<N>-<idx>）
-├── docs/               课程来源 / 架构图 / 论文阅读笔记
-├── artifacts/          本地产物（gitignored）
-├── scripts/            5 个 CLI：train / evaluate / generate / benchmark / serve
-├── COURSE.md           16 周完整大纲（冻结）
-└── ROADMAP.md          进度快照
+├── weeks/         16 周学习与实验记录
+├── assignments/   5 个正式作业与 Final 提交
+├── src/           持续演化的统一实现（token_to_agent/ 命名空间）
+├── tests/         correctness tests
+├── configs/       可复现实验配置
+├── experiments/   实验记录与结果
+├── extensions/    课程之外的研究实验（EXT-W<N>-<idx>）
+├── docs/          课程来源 / 架构图 / 论文阅读
+├── artifacts/     本地产物（gitignored）
+├── scripts/       CLI 入口
+├── COURSE.md      16 周完整课程计划
+└── ROADMAP.md     当前进度
 ```
+
+`src/` 内部详细子包划分见 `src/token_to_agent/__init__.py` 顶部 docstring 与 `COURSE.md §23`。
 
 ---
 
-## 快速开始
+## Quick Start
+
+> 已完成模块均提供可复现实验入口；后续模块按 16 周计划持续建设。
 
 ```bash
 # 安装
@@ -154,36 +145,20 @@ pip install -e .
 # 跑测试
 bash tests/test.sh
 
-# 训练 toy 0.1B
-bash scripts/setup_env.sh
+# 训练链路快速验证（约 5M，仅做 smoke test）
 python scripts/train.py --config configs/pretrain/toy-5m.yaml
 
-# 推理
+# HW1 正式 baseline（约 100M，需要 GPU）
+python scripts/train.py --config configs/pretrain/baseline-100m.yaml
+
+# 用 checkpoint 生成
 python scripts/generate.py --checkpoint artifacts/checkpoints/toy-5m --prompt "你好"
 
-# benchmark（W2）
-python scripts/benchmark.py attention --backend triton --seq-len 128 1024
+# Attention kernel benchmark（W4 / HW2）
+python scripts/benchmark.py attention --backend pytorch triton --seq-len 128 1024
 ```
 
-> ⚠️ 本仓库代码**完整可跑**，但 0.1B 规模实验需要在带 GPU 的机器上执行。
-> Jetson Nano 仅作开发 / 教学环境，toy-5m 在 CPU 上约 5 分钟跑通。
-
----
-
-## 16 周节奏
-
-| 时间 | 交付 | 状态 |
-|---|---|---|
-| W1-W3 | HW1 Foundations | 🟡 in progress |
-| W4-W5 | HW2 Systems | 🟡 in progress |
-| W6-W7 | HW3 Data + Scaling | ⚪ not started |
-| W8 | Final Project Proposal | ⚪ not started |
-| W9-W11 | HW4 Post-Training | ⚪ not started |
-| W10 | Final Mid-Report | ⚪ not started |
-| W12-W15 | Agent / Harness / Verifier | ⚪ not started |
-| W16 | Paper + Live Demo | ⚪ not started |
-
-每个阶段打 Git tag：`v0.1-hw1-foundations` / `v0.2-hw2-systems` / … / `v1.0-from-token-to-agent`。
+> Jetson Nano / CPU 环境仅适合开发与 smoke test；正式 baseline 实验需要在带 GPU 的机器上运行。
 
 ---
 
@@ -196,5 +171,5 @@ Apache 2.0 — 见 [LICENSE](./LICENSE)。
 ## 致谢
 
 - **课程来源**：唐杰《高级机器学习》2026-09-17 · [PPT 摘录](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
-- **方法论参考**：HKUDS/CLI-Anything（agent-native CLI 设计）
-- **论文参考**：THUDM GLM 系列（GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS 等）
+- **研究坐标**：THUDM GLM 系列（GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS / TDRM / AgentTuning / AgentBench / SCALE-CUA / INFTY）
+- **延伸阅读**：[`docs/reading/`](./docs/reading/)
