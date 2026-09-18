@@ -5,6 +5,9 @@ The model picks the backend via `attn_backend` in its config:
   - "triton":   uses src/kernels/triton_attention.triton_attention_forward.
   - "reference": uses src/kernels/reference_attention.reference_attention_forward
                  (slowest, used as oracle for correctness tests).
+  - "naive":    uses reference_attention.naive_attention_forward — pure-PyTorch
+                matmul path, no SDPA fusion. Used as the "naive" row in W4
+                benchmarks to expose what SDPA / Flash would buy you.
 
 On machines without CUDA, requests for "triton" automatically fall back to
 "reference" with a logged warning. This keeps the model.runnable everywhere
@@ -22,7 +25,7 @@ from . import reference_attention
 from . import triton_attention as _triton_mod
 
 
-Backend = Literal["pytorch", "triton", "reference"]
+Backend = Literal["pytorch", "triton", "reference", "naive"]
 
 
 @dataclass
@@ -35,6 +38,10 @@ class AttentionBackend:
 def _probe_pytorch() -> AttentionBackend:
     # F.scaled_dot_product_attention works on CPU and CUDA.
     return AttentionBackend(name="pytorch", available=True, reason="F.scaled_dot_product_attention always works")
+
+
+def _probe_naive() -> AttentionBackend:
+    return AttentionBackend(name="naive", available=True, reason="pure-PyTorch matmul path (no SDPA fusion)")
 
 
 def _probe_triton() -> AttentionBackend:
@@ -54,7 +61,7 @@ def _probe_triton() -> AttentionBackend:
 
 
 def list_backends() -> list[AttentionBackend]:
-    return [_probe_pytorch(), _probe_triton()]
+    return [_probe_pytorch(), _probe_triton(), _probe_naive()]
 
 
 def get_backend(requested: str) -> AttentionBackend:
@@ -64,9 +71,11 @@ def get_backend(requested: str) -> AttentionBackend:
         return _probe_pytorch()
     if requested == "triton":
         return _probe_triton()
+    if requested == "naive":
+        return _probe_naive()
     if requested == "reference":
         return AttentionBackend(name="reference", available=True, reason="pure-PyTorch reference oracle")
-    raise ValueError(f"unknown backend {requested!r}; expected one of pytorch/triton/reference")
+    raise ValueError(f"unknown backend {requested!r}; expected one of pytorch/triton/reference/naive")
 
 
 def call(
@@ -109,6 +118,14 @@ def call(
             )
         # Silent fallback (caller logs).
         return reference_attention.reference_attention_forward(
+            q, k, v,
+            is_causal=is_causal,
+            softmax_scale=softmax_scale,
+            n_rep=n_rep,
+        )
+
+    if backend == "naive":
+        return reference_attention.naive_attention_forward(
             q, k, v,
             is_causal=is_causal,
             softmax_scale=softmax_scale,
