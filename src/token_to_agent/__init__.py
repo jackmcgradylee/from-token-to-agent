@@ -1,15 +1,18 @@
-"""LLM from-scratch to agent — root package.
+"""LLM from token to agent — root package.
 
-This package is the growing codebase. Every HW writes into a sub-package here:
-  tokenizer/   HW1 — BPE
-  model/       HW1 — Transformer LM
-  training/    HW1 — training loop, generation
-  data/        HW1 dataset reader (HW3 will extend)
-  kernels/     HW2 — Triton attention etc.
-  post_training/ HW4 — SFT/DPO/RLVR
-  environments/ FINAL — verifiable envs
-  harness/     FINAL — agent loop
-  evaluation/  HW4 + FINAL — unified eval
+Mirrors the layout declared in COURSE.md §23:
+    from_scratch/   W1-W4 + W10 DPO/RLVR core — Tokenizer, Transformer, Training,
+                   Kernels, DPO loss, RLVR teaching loop. All hand-written.
+    systems/        W4-W5 — Distributed (DDP/FSDP/Megatron wrappers), Serving
+                   (vLLM/SGLang client + Load Generator), Profiling.
+    data/           W6-W7 — Raw pipeline + Synthetic Data Factory.
+    post_training/  W8-W11 — SFT/DPO/RLVR scale-train runners (use TRL/slime/verl).
+    agent/          W12-W16 — Harness, Environments, Tools, Memory, Self-Eval.
+    evaluation/     HW4 + FINAL — Unified eval harness.
+
+The two-track model strategy (COURSE §13) lives here:
+    - Scratch Track (~100M): experiments under from_scratch/ + data/
+    - Post-Training Track (1.5B-9B): experiments under post_training/
 """
 
-__version__ = "0.1.0"
+__version__ = "0.5.0"

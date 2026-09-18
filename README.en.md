@@ -94,12 +94,29 @@ from-token-to-agent/
 ├── weeks/              ★ Primary axis: 16-week learning rhythm (W1-W5 created)
 ├── assignments/        ★ Secondary axis: milestone submission view
 ├── src/token_to_agent/ ★ Sole canonical code region
-│   ├── tokenizer/      BPE (HW1)
-│   ├── model/          decoder-only Transformer (HW1)
-│   ├── training/       AdamW + cosine LR (HW1)
-│   ├── kernels/        Triton + reference attention (HW2)
-│   └── (serving/ data/ post_training/ rl/ environments/ harness/ memory/ evaluation/ utils/)
-│                       filled when the corresponding week starts
+│   ├── from_scratch/   W1-W4 + W10 core hand-written implementations
+│   │   ├── tokenizer/    BPE (W1)
+│   │   ├── model/        decoder-only Transformer (W2)
+│   │   ├── training/     AdamW + cosine LR + checkpoint (W3)
+│   │   ├── kernels/      Triton + reference attention (W4)
+│   │   ├── dpo/          DPO core loss (W9 teaching version)
+│   │   └── rlvr/         RLVR teaching loop (W10)
+│   ├── systems/        W4-W5 framework wrappers
+│   │   ├── distributed/    DDP / FSDP / Megatron glue
+│   │   ├── serving/        vLLM / SGLang client + Load Generator
+│   │   └── profiling/      kernel breakdown + arithmetic intensity
+│   ├── data/           W6-W7 Raw pipeline + Synthetic Data Factory
+│   ├── post_training/  W8-W11 scale-train glue (TRL / slime / verl)
+│   │   ├── sft/            SFT runner
+│   │   ├── preference/     DPO scale runner
+│   │   └── rl/             RLVR + Agent RL runner
+│   ├── agent/          W12-W16 hand-written agent stack
+│   │   ├── harness/        minimum Harness (Parser / Context / Retry / Budget / Sandbox)
+│   │   ├── environments/   Verifiable Coding Agent envs
+│   │   ├── tools/          Tool schemas + parsers
+│   │   ├── memory/         Working / Episodic / Procedural
+│   │   └── self_eval/      Self-Judge + Calibration
+│   └── evaluation/     HW4 + FINAL unified eval matrix
 ├── tests/              per-module
 ├── configs/            training / systems / post-training / agent configs
 ├── experiments/        5-piece: config + metadata + metrics + README per experiment

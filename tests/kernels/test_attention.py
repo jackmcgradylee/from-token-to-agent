@@ -15,9 +15,9 @@ sys.path.insert(0, str(_repo_root))
 
 import torch
 
-from src.token_to_agent.kernels import reference_attention
-from src.token_to_agent.kernels import triton_attention as triton_mod
-from src.token_to_agent.kernels import interface as attn_iface
+from src.token_to_agent.from_scratch.kernels import reference_attention
+from src.token_to_agent.from_scratch.kernels import triton_attention as triton_mod
+from src.token_to_agent.from_scratch.kernels import interface as attn_iface
 
 
 def test_triton_vs_reference():
@@ -78,7 +78,7 @@ def test_backend_dispatch():
 
 def test_attention_layer_backend_switch():
     """Verify the model's Attention.set_backend routes correctly."""
-    from src.token_to_agent.model import TransformerLM, TransformerConfig
+    from src.token_to_agent.from_scratch.model import TransformerLM, TransformerConfig
     cfg = TransformerConfig(vocab_size=64, d_model=32, n_layers=2, n_heads=2, n_kv_heads=1, d_ff=64, max_seq_len=32)
     m = TransformerLM(cfg)
     for b in ["reference", "pytorch", "triton"]:

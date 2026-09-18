@@ -28,8 +28,8 @@ for p in (str(_repo_root), str(_repo_root / "src")):
 
 import torch
 
-from src.token_to_agent.kernels import interface as attn_iface
-from src.token_to_agent.kernels import reference_attention
+from src.token_to_agent.from_scratch.kernels import interface as attn_iface
+from src.token_to_agent.from_scratch.kernels import reference_attention
 
 
 def cmd_attention(args) -> int:

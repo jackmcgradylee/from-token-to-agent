@@ -23,9 +23,9 @@ for p in (str(_repo_root), str(_repo_root / "src")):
 
 import yaml
 
-from src.token_to_agent.tokenizer.bpe import BPETokenizer
-from src.token_to_agent.model import TransformerLM, TransformerConfig, count_params
-from src.token_to_agent.training.train import train, TrainConfig
+from src.token_to_agent.from_scratch.tokenizer.bpe import BPETokenizer
+from src.token_to_agent.from_scratch.model import TransformerLM, TransformerConfig, count_params
+from src.token_to_agent.from_scratch.training.train import train, TrainConfig
 
 
 def load_yaml(path: str) -> dict:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "token-to-agent"
-version = "0.1.0"
+version = "0.5.0"
 description = "16-week course project (Tsinghua AML 2026 Fall): from raw text to a self-improving agent."
 readme = "README.md"
 requires-python = ">=3.10"

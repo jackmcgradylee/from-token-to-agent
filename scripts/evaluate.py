@@ -35,8 +35,8 @@ for p in (str(_repo_root), str(_repo_root / "src")):
 
 import torch
 
-from src.token_to_agent.tokenizer.bpe import BPETokenizer
-from src.token_to_agent.model import TransformerConfig, TransformerLM
+from src.token_to_agent.from_scratch.tokenizer.bpe import BPETokenizer
+from src.token_to_agent.from_scratch.model import TransformerConfig, TransformerLM
 
 
 def main() -> int:

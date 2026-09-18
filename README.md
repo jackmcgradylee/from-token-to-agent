@@ -92,12 +92,29 @@ from-token-to-agent/
 ├── weeks/              ★ 第一主线：16 周学习节奏（W1-W5 已建）
 ├── assignments/        ★ 第二主线：作业 milestone 提交视图
 ├── src/token_to_agent/ ★ 唯一正式代码区
-│   ├── tokenizer/      BPE 实现（HW1）
-│   ├── model/          decoder-only Transformer（HW1）
-│   ├── training/       AdamW + cosine LR（HW1）
-│   ├── kernels/        Triton + reference attention（HW2）
-│   └── (serving/ data/ post_training/ rl/ environments/ harness/ memory/ evaluation/ utils/)
-│                       待对应周开工时填充
+│   ├── from_scratch/   W1-W4 + W10 核心手写实现
+│   │   ├── tokenizer/    BPE 实现（W1）
+│   │   ├── model/        decoder-only Transformer（W2）
+│   │   ├── training/     AdamW + cosine LR + checkpoint（W3）
+│   │   ├── kernels/      Triton + reference attention（W4）
+│   │   ├── dpo/          DPO 核心 Loss（W9 教学版）
+│   │   └── rlvr/         RLVR 教学循环（W10）
+│   ├── systems/        W4-W5 框架封装
+│   │   ├── distributed/    DDP / FSDP / Megatron 封装
+│   │   ├── serving/        vLLM / SGLang client + Load Generator
+│   │   └── profiling/      kernel breakdown + arithmetic intensity
+│   ├── data/           W6-W7 Raw pipeline + Synthetic Data Factory
+│   ├── post_training/  W8-W11 规模训练（TRL / slime / verl 包装）
+│   │   ├── sft/            SFT runner
+│   │   ├── preference/     DPO scale runner
+│   │   └── rl/             RLVR + Agent RL runner
+│   ├── agent/          W12-W16 手写智能体栈
+│   │   ├── harness/        最小 Harness（Parser / Context / Retry / Budget / Sandbox）
+│   │   ├── environments/   Verifiable Coding Agent 环境
+│   │   ├── tools/          Tool schemas + parsers
+│   │   ├── memory/         Working / Episodic / Procedural
+│   │   └── self_eval/      Self-Judge + Calibration
+│   └── evaluation/     HW4 + FINAL 统一评测矩阵
 ├── tests/              按模块划分
 ├── configs/            训练 / 系统 / 后训练 / agent 配置
 ├── experiments/        每实验 5 件套：config + metadata + metrics + README

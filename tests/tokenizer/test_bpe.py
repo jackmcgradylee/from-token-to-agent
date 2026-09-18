@@ -6,7 +6,7 @@ from pathlib import Path
 _repo_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_repo_root))
 
-from src.token_to_agent.tokenizer.bpe import (
+from src.token_to_agent.from_scratch.tokenizer.bpe import (
     BPETokenizer, NUM_SPECIAL, BOS_ID, EOS_ID, PAD_ID, UNK_ID,
 )
 
