@@ -97,22 +97,22 @@ W16 What Comes After LLMs?
 
 ## 当前进度
 
-**Current: W3 — Training Dynamics & Scaling Laws (5-point scaling pilot in progress)**
+**Current: W3 完成 ✅ — Training Dynamics & Scaling Laws（5-point scaling pilot, 4.23% hold-out error）**
 
 | 作业 | 状态 |
 | --- | --- |
 | **HW1 Foundations** | 🟢 完成（W1 tokenizers + W3 scaling pilot + EXT-W1-01） |
 | **HW2 Systems** | 🟠 实现完成，ablation 已交付（W2 RMSNorm/GQA + W4 Triton 起步） |
-| **HW3 Data + Scaling** | 🔜 计划（W6 起，scaling pilot 已预热） |
+| **HW3 Data + Scaling** | 🟡 W3 scaling pilot 完成（hold-out 4.23%）；W6-W7 data pipeline 待启动 |
 | **HW4 Post-Training** | ⚪ 未开始（W8） |
 | **Final Project** | ⚪ 未开始（W8 启动 proposal） |
 
 **最近进展**
 
-- ✅ **W3 scaling pilot** — 5 个 iso-data pilot (1.6M / 3.6M / 6.9M / 15.3M / 33.4M params)，同 1MB corpus + 100 步 + 同 lr schedule。前两点 val_loss 4.15 → 3.74（Δ=−0.41，N×2.2）。Shared harness `_common.py` + 5 个 thin runner + grid-search hold-out 拟合 (`exp-007`) 全部就位。
-- ✅ **EXT-W1-01** — BPE vocab sweep: 在 21 KB toy corpus 上饱和于 `actual_vocab=530`，target ≥ 1024 时 trainer 提前终止，bytes/token 冻结在 1.214。
-- ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm（参数差 +640）+ MHA vs GQA（KV cache 4× shrink），59/59 tests PASS。
-- ✅ **`docs/scaling-law.md`** — W3 文本 deliverable 完成，明确写出 4 个边界条件（100 步不收敛、1MB corpus 太短、vocab 没归一化、不是 Chinchilla）。
+- ✅ **W3 scaling pilot — closed loop**：5 个 iso-data pilot (1.6M / 3.6M / 6.6M / 14.9M / 32.9M params)，val_loss 单调 4.15 → 3.74 → 3.45 → 3.05 → **2.69**。Chinchilla-style fit `L = 1.53 + 88·N^(-0.245)` 在 4 点拟合，预测 20M (32.9M) hold-out 为 2.80 vs actual 2.69，**相对误差 4.23%**。详见 `experiments/w03/exp-007/results/fit.md`。
+- ✅ **`docs/scaling-law.md`** — W3 文本 deliverable 完成（4 个边界条件 + EXT-W3-01/02/03 增量方向）。
+- ✅ **EXT-W1-01** — BPE vocab sweep: 在 21 KB toy corpus 上饱和于 `actual_vocab=530`。
+- ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm（参数差 +640）+ MHA vs GQA（KV cache 4× shrink），57/57 tests PASS。
 
 详细实验、扩展与下一步计划见 [`ROADMAP.md`](./ROADMAP.md)。
 

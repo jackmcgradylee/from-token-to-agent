@@ -22,11 +22,19 @@
       "val_loss": 3.0527318815658036
     }
   ],
-  "holdout_point": null,
+  "holdout_point": {
+    "label": "20m",
+    "n_params": 32872960,
+    "actual_val_loss": 2.6894899564933263
+  },
   "fit_params": {
     "a": 88.02050559376023,
     "alpha": 0.24457790630473228,
     "L_inf": 1.5263659407829018
   },
-  "prediction": null
+  "prediction": {
+    "predicted_val_loss": 2.803190302363734,
+    "abs_error": 0.11370034587040756,
+    "rel_error": 0.042275802367618805
+  }
 }

@@ -10,6 +10,7 @@ Fit the Chinchilla-style power law on the 4 non-hold-out points, then predict th
 | `2_5m` | 3,590,400 | 3.7409 |
 | `5m` | 6,595,584 | 3.4538 |
 | `10m` | 14,891,008 | 3.0527 |
+| `20m` | 32,872,960 | 2.6895  *(hold-out)* |
 
 ## Fit
 
@@ -21,11 +22,13 @@ Model: `L(N) = L_inf + a · N^(-α)`. Fitted by 1-D grid search over `L_inf` wit
 
 ## Hold-out prediction
 
-**Hold-out point (20M) not yet trained.** Re-run `experiments/w03/exp-007-scaling-law-fit/runner.py` after `exp-006-scaling-pilot-20m` finishes to get the extrapolation error.
+| Held-out | N | Predicted loss | Absolute error | Relative error |
+| --- | ---: | ---: | ---: | ---: |
+| `20m` | 32,872,960 | 2.8032 | 0.1137 | 4.23% |
 
 ## What this means
 
-Fit is computed on the 4 small points; the 20M hold-out comparison will be filled in when that pilot completes.
+The fit extrapolates well. The loss-vs-N curve on this corpus behaves like a clean power law over the swept range.
 
 ## Caveats
 

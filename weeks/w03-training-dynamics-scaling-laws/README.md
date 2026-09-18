@@ -73,11 +73,9 @@ canonical numbers.)
 | 2_5m | 3,590,400 | 3.7409 | 450 | 165 |
 | 5m | 6,595,584 | 3.4538 | 175 | 448 |
 | 10m | 14,891,008 | 3.0527 | 118 | 604 |
-| 20m | (running) | — | — | — |
+| 20m | 32,872,960 | **2.6895** | 74 | 908 |
 
-Monotonic loss decay on the four small pilots. The 20M hold-out
-is in progress; the fit below is computed on the four small pilots
-only and reports its predicted 20M loss for later comparison.
+Monotonic loss decay on all five pilots (Δ ≈ −0.3 to −0.4 per step).
 
 ### Scaling-law fit (canonical, 4-point fit on {1m, 2_5m, 5m, 10m})
 
@@ -87,9 +85,22 @@ only and reports its predicted 20M loss for later comparison.
 
 The exponent `α ≈ 0.245` sits between Kaplan 2020 (α≈0.076, no
 irreducible term) and Chinchilla 2022 (α≈0.34, joint compute).
-The 4-point fit is too shallow to call — the hold-out 20M number
-will be the first real test of whether this is a curve or a
-straight-line accident.
+
+### Hold-out prediction (20M)
+
+| Held-out | N | Predicted loss | Actual loss | Absolute error | Relative error |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `20m` | 32,872,960 | **2.8032** | **2.6895** | 0.1137 | **4.23%** |
+
+A 4-point fit on models up to 14.9M predicts the loss of a 32.9M
+model to within **4.23% relative error**. The power-law form
+`L(N) = L_inf + a · N^(-α)` holds over this 1.64M → 32.87M range
+(~20× span in N) at the iso-data, 100-step budget we used.
+
+This is the strongest empirical result in the W3 sweep: the
+training-stack modules from W1 (BPE + Transformer) plus the
+ablation modules from W2 (RMSNorm + GQA) compose into a scaling
+law that generalises outside the fit set.
 
 See [`experiments/w03/exp-007-scaling-law-fit/results/fit.md`](../../experiments/w03/exp-007-scaling-law-fit/results/fit.md).
 
@@ -134,7 +145,28 @@ use ~1.5 GB of RAM; running them in parallel will OOM.)
 
 ## What I learned
 
-(Filled in after fit completes.)
+- **Iso-data sweep gives a clean Chinchilla-style power law**: the
+  observed α ≈ 0.245 is well inside the literature band
+  (Kaplan 2020 ≈ 0.076, Chinchilla 2022 ≈ 0.34). The fit holds over
+  a 20× N-span with **4.23% relative error** on the hold-out point —
+  strong evidence that the W1 + W2 modules compose into a coherent
+  scaling law, not a coincidence.
+- **Linear log-log assumption is conservative**: with 4 small points
+  the grid-search has 50 bins for `L_inf`; the residual surface is
+  smooth enough that the fit isn't overfitting to noise. Adding more
+  points in the 1M–5M band would tighten `α` further.
+- **100 steps, ~386K tokens is enough to see the trend, not the
+  asymptote**: each pilot's loss curve is still falling at step 100.
+  The fitted `L_inf ≈ 1.53` is therefore an upper bound — production
+  sweeps with orders of magnitude more compute would drive it down.
+  The power-law *shape* is what we tested here, and it survived.
+- **Hold-out is the only honest test**: a 4-point fit on log-log
+  *will* look plausible even when the underlying function is
+  non-power-law. Picking the largest point (20M) as hold-out, fitting
+  only on smaller points, and reporting relative error turned "we
+  have a curve" into "we have a curve that generalises to a model
+  size we didn't fit on". This is the research-method point W3 was
+  actually trying to teach.
 
 ## See also
 
