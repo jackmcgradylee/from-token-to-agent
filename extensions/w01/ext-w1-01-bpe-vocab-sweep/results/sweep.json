@@ -1,0 +1,52 @@
+[
+  {
+    "target_vocab": 260,
+    "actual_vocab": 260,
+    "num_merges": 0,
+    "train_seconds": 0.014699459075927734,
+    "eval_bytes": 272,
+    "eval_tokens": 272,
+    "eval_bytes_per_token": 1.0,
+    "eval_unk_count": 0
+  },
+  {
+    "target_vocab": 512,
+    "actual_vocab": 512,
+    "num_merges": 252,
+    "train_seconds": 0.14869904518127441,
+    "eval_bytes": 272,
+    "eval_tokens": 224,
+    "eval_bytes_per_token": 1.2142857142857142,
+    "eval_unk_count": 0
+  },
+  {
+    "target_vocab": 1024,
+    "actual_vocab": 530,
+    "num_merges": 270,
+    "train_seconds": 0.1527385711669922,
+    "eval_bytes": 272,
+    "eval_tokens": 224,
+    "eval_bytes_per_token": 1.2142857142857142,
+    "eval_unk_count": 0
+  },
+  {
+    "target_vocab": 2048,
+    "actual_vocab": 530,
+    "num_merges": 270,
+    "train_seconds": 0.14831233024597168,
+    "eval_bytes": 272,
+    "eval_tokens": 224,
+    "eval_bytes_per_token": 1.2142857142857142,
+    "eval_unk_count": 0
+  },
+  {
+    "target_vocab": 4096,
+    "actual_vocab": 530,
+    "num_merges": 270,
+    "train_seconds": 0.1485898494720459,
+    "eval_bytes": 272,
+    "eval_tokens": 224,
+    "eval_bytes_per_token": 1.2142857142857142,
+    "eval_unk_count": 0
+  }
+]

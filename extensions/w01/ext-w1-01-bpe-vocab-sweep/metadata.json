@@ -1,0 +1,46 @@
+{
+  "extension_id": "EXT-W1-01",
+  "title": "BPE vocab size sweep on a small corpus",
+  "week": "W1",
+  "stage": "post-W1 (extension on top of HW1 Foundations)",
+  "status": "complete",
+  "created": "2026-09-17",
+  "updated": "2026-09-17",
+  "tags": ["tokenization", "bpe", "ablation", "vocab-size", "saturation"],
+  "hardware": "CPU-only (Jetson Nano, no CUDA)",
+  "hypothesis": "bytes/token grows sublinearly with vocab; once merges are saturated, more target vocab buys no compression.",
+  "method": {
+    "tokenizer": "src/token_to_agent/from_scratch/tokenizer/bpe.py:BPETokenizer (byte-level, min_pair_freq=2)",
+    "corpus": "experiments/w01/exp-001-char-word-bpe-comparison/samples.txt replicated 30x (~21 KB)",
+    "eval_set": "## eval section of the same samples.txt (5 held-out lines, 272 bytes)",
+    "sweep": "target_vocab_size in {260, 512, 1024, 2048, 4096}",
+    "metrics": ["actual_vocab", "num_merges", "train_seconds", "eval_tokens", "bytes_per_token", "eval_unk_count"]
+  },
+  "results": {
+    "table": [
+      {"target_vocab": 260, "actual_vocab": 260, "merges": 0, "train_s": 0.015, "eval_tokens": 272, "bpt": 1.000, "unk": 0},
+      {"target_vocab": 512, "actual_vocab": 512, "merges": 252, "train_s": 0.149, "eval_tokens": 224, "bpt": 1.214, "unk": 0},
+      {"target_vocab": 1024, "actual_vocab": 530, "merges": 270, "train_s": 0.153, "eval_tokens": 224, "bpt": 1.214, "unk": 0},
+      {"target_vocab": 2048, "actual_vocab": 530, "merges": 270, "train_s": 0.148, "eval_tokens": 224, "bpt": 1.214, "unk": 0},
+      {"target_vocab": 4096, "actual_vocab": 530, "merges": 270, "train_s": 0.149, "eval_tokens": 224, "bpt": 1.214, "unk": 0}
+    ],
+    "saturation_target": 1024,
+    "saturation_actual_vocab": 530,
+    "best_bpt": 1.214,
+    "best_bpt_target_vocab": 512
+  },
+  "conclusion": "On this 21 KB corpus, BPE saturates at actual_vocab=530. Asking for target_vocab >= 1024 yields no additional merges and no additional compression — the trainer's min_pair_freq=2 loop simply terminates early. Best bytes/token (1.214) is achieved at target_vocab=512; everything beyond is free entropy (larger embedding tables, identical downstream behavior).",
+  "deliverables": [
+    "extensions/w01/ext-w1-01-bpe-vocab-sweep/README.md",
+    "extensions/w01/ext-w1-01-bpe-vocab-sweep/runner.py",
+    "extensions/w01/ext-w1-01-bpe-vocab-sweep/results/sweep.json",
+    "extensions/w01/ext-w1-01-bpe-vocab-sweep/results/sweep.md",
+    "extensions/w01/ext-w1-01-bpe-vocab-sweep/metadata.json"
+  ],
+  "reproduction": "PYTHONPATH=. .venv/bin/python extensions/w01/ext-w1-01-bpe-vocab-sweep/runner.py --replicate 30 --targets 260,512,1024,2048,4096",
+  "future_extensions": [
+    {"id": "EXT-W1-02", "title": "Tokenize-time latency vs vocab size"},
+    {"id": "EXT-W1-03", "title": "Same sweep on a 1 GB FineWeb-Edu slice"},
+    {"id": "EXT-W1-04", "title": "Closed-vocab BPE — UNK rate vs vocab size"}
+  ]
+}

@@ -9,7 +9,7 @@ before touching any model code.
 
 ## Status
 
-**Done.** All W1 deliverables shipped.
+**Done.** All W1 deliverables shipped, plus one extension (EXT-W1-01).
 
 ## Implemented this week
 
@@ -93,6 +93,20 @@ All four acceptance criteria met.
 
 - Vocab size, bytes/token, UNK count on held-out eval.
 - Per-sample token count table for 5 unseen sentences.
+
+## Extensions (added after W1 sign-off)
+
+### EXT-W1-01 — BPE vocab size sweep
+
+Saturation study on the W1 samples corpus. Sweeps
+`target_vocab_size ∈ {260, 512, 1024, 2048, 4096}` and shows that
+BPE saturates at `actual_vocab = 530` on this corpus. Asking for more
+does nothing — `min_pair_freq=2` filters every pair, the merge loop
+terminates early, and bytes/token freezes at 1.214.
+
+- [`extensions/w01/ext-w1-01-bpe-vocab-sweep/README.md`](../../extensions/w01/ext-w1-01-bpe-vocab-sweep/README.md)
+- [`extensions/w01/ext-w1-01-bpe-vocab-sweep/runner.py`](../../extensions/w01/ext-w1-01-bpe-vocab-sweep/runner.py)
+- [`extensions/w01/ext-w1-01-bpe-vocab-sweep/results/sweep.{json,md}`](../../extensions/w01/ext-w1-01-bpe-vocab-sweep/results/)
 
 ## What I concluded
 

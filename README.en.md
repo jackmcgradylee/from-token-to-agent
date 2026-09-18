@@ -96,15 +96,21 @@ Milestone submission view: [`assignments/`](./assignments/).
 
 ## Current progress
 
-**Current: W4 — Compute, Kernels, Parallelism**
+**Current: W2 — Architecture Revisited (RMSNorm + GQA ablations done)**
 
 | Assignment | Status |
 | --- | --- |
-| **HW1 Foundations** | 🟠 implementation done, report pending |
-| **HW2 Systems** | 🟡 in progress (W4 attention kernel / benchmark) |
+| **HW1 Foundations** | 🟢 complete (W1 tokenizers + EXT-W1-01 BPE vocab sweep) |
+| **HW2 Systems** | 🟠 implementation done, ablations shipped (W2 RMSNorm/GQA + W4 Triton started) |
 | **HW3 Data + Scaling** | ⚪ not started (W6) |
 | **HW4 Post-Training** | ⚪ not started (W8) |
-| **Final Project** | ⚪ not started (proposal opens W8) |
+| **Final Project** | ⚪ not started (W8 proposal kickoff) |
+
+**Recent progress**
+
+- ✅ **EXT-W1-01** — BPE vocab sweep: saturates at `actual_vocab=530` on the 21 KB toy corpus. Asking for `target ≥ 1024` causes the trainer to terminate early; bytes/token freezes at 1.214.
+- ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm (+640 params) + MHA vs GQA (4× KV cache shrink). 59/59 tests pass.
+- 🔜 **W3** — Training dynamics + scaling-law hold-out prediction experiment.
 
 Detailed experiments, extensions, and next-step plan: [`ROADMAP.md`](./ROADMAP.md).
 

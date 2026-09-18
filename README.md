@@ -97,15 +97,21 @@ W16 What Comes After LLMs?
 
 ## 当前进度
 
-**Current: W4 — Compute, Kernels, Parallelism**
+**Current: W2 — Architecture Revisited (RMSNorm + GQA ablations done)**
 
 | 作业 | 状态 |
 | --- | --- |
-| **HW1 Foundations** | 🟠 实现完成，report 待整理 |
-| **HW2 Systems** | 🟡 进行中（W4 attention kernel / benchmark） |
+| **HW1 Foundations** | 🟢 完成（W1 tokenizers + EXT-W1-01 BPE vocab sweep） |
+| **HW2 Systems** | 🟠 实现完成，ablation 已交付（W2 RMSNorm/GQA + W4 Triton 起步） |
 | **HW3 Data + Scaling** | ⚪ 未开始（W6） |
 | **HW4 Post-Training** | ⚪ 未开始（W8） |
 | **Final Project** | ⚪ 未开始（W8 启动 proposal） |
+
+**最近进展**
+
+- ✅ **EXT-W1-01** — BPE vocab sweep: 在 21 KB toy corpus 上饱和于 `actual_vocab=530`，target ≥ 1024 时 trainer 提前终止，bytes/token 冻结在 1.214。
+- ✅ **W2 exp-001/002** — RMSNorm vs LayerNorm（参数差 +640）+ MHA vs GQA（KV cache 4× shrink），59/59 tests PASS。
+- 🔜 **W3** — Training dynamics + scaling law hold-out 预测实验。
 
 详细实验、扩展与下一步计划见 [`ROADMAP.md`](./ROADMAP.md)。
 
