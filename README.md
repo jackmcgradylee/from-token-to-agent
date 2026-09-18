@@ -7,6 +7,24 @@
 
 ---
 
+## 课程来源
+
+本仓库是 **唐杰教授 2026-09-17 在清华大学《高级机器学习》课上正式布置的作业的工作答案**。
+
+课程的核心命题只有一个，但用 16 周把它彻底走完——
+
+> 监督信号从「人类标签」一路演化到「自评判」，技术栈只是表象。
+
+那张 PPT 底部那张 "A Ladder That Climbs the Course" 的图，是整个仓库的脊柱：
+
+![唐杰 2026-09-17《高级机器学习》PPT 摘录（6 张拼图：LLM 用例金字塔 / Scaling↔Generalization 时间线 / 课程导言"让机器像人一样思考" / 2026 研究优先级 / 16 周课程地图 / 历史脉络——三次范式转移，1980s→2026）](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+
+6 张幻灯片从左到右是：LLM 用例金字塔、Scaling ↔ Generalization 时间线、课程导言「让机器像人一样思考」、2026 研究优先级、**16 周课程地图**（本仓库的进度表）、以及历史脉络（三次范式转移，1980s → 2026）。
+
+完整 16 周大纲（每周交付物、通过标准、扩展规则）冻结在 [`COURSE.md`](./COURSE.md)。
+
+---
+
 ## Learning Signal Ladder
 
 ```
@@ -19,7 +37,7 @@ environment         ←  W12-W13 Coding Agent / Memory
 self-judge          ←  W14-W16 自评判 / 轨迹蒸馏 / 长程自治
 ```
 
-唐杰《高级机器学习》2026 秋季 · 16 周课程 · [完整大纲](./COURSE.md)
+每一级横档 = 信号越来越便宜、人类越来越少地介入某个回路。
 
 ---
 
@@ -144,6 +162,6 @@ Apache 2.0 — 见 [LICENSE](./LICENSE)。
 
 ## 致谢
 
-- 课程来源：唐杰《高级机器学习》2026 秋季 · [PPT 摘录](./docs/course-origin/)
-- 课程参考：HKUDS/CLI-Anything（agent-native CLI 设计方法论）
-- 论文参考：THUDM GLM 系列（GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS 等）
+- **课程来源**：唐杰《高级机器学习》2026-09-17 · [PPT 摘录](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+- **方法论参考**：HKUDS/CLI-Anything（agent-native CLI 设计）
+- **论文参考**：THUDM GLM 系列（GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS 等）

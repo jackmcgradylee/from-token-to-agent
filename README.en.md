@@ -7,6 +7,24 @@
 
 ---
 
+## Course origin
+
+This repository is **the working answer to the 16-week assignment that Prof. Jie Tang (唐杰) formally assigned on 2026-09-17** in Tsinghua's *Advanced Machine Learning* lecture.
+
+The course has only one real thesis, and uses 16 weeks to walk it all the way through—
+
+> Supervised signal evolves from "human labels" to "self-judge". The technology stack is just the surface.
+
+The "A Ladder That Climbs the Course" diagram at the bottom of Prof. Tang's PPT is the spine of this repo:
+
+![Tang's 2026-09-17 AML lecture PPT collage — 6 slides in order: LLM use-case pyramid / Scaling↔Generalization timeline / opening framing "让机器像人一样思考" / 2026 research priorities / 16-week course map / historical context — three paradigm shifts, 1980s → 2026](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+
+The six slides, left-to-right: LLM use-case pyramid · Scaling ↔ Generalization timeline · Opening framing "让机器像人一样思考" (Machines that think like humans) · 2026 research priorities · **the 16-week course map** (which this repo's progress table mirrors) · historical context (three paradigm shifts, 1980s → 2026).
+
+The full 16-week syllabus — weekly deliverables, pass criteria, extension conventions — is frozen in [`COURSE.md`](./COURSE.md).
+
+---
+
 ## Learning Signal Ladder
 
 ```
@@ -19,7 +37,7 @@ environment         ←  W12-W13 Coding Agent / Memory
 self-judge          ←  W14-W16 Self-judge / trajectory distillation / long-horizon autonomy
 ```
 
-Tang Jie — *Advanced Machine Learning*, Fall 2026 — 16 weeks — [full syllabus](./COURSE.md)
+Each rung = signal gets cheaper to produce, humans exit one more loop.
 
 ---
 
@@ -146,6 +164,6 @@ Apache 2.0 — see [LICENSE](./LICENSE).
 
 ## Acknowledgements
 
-- Course source: Tang Jie — *Advanced Machine Learning*, Fall 2026 — [PPT excerpts](./docs/course-origin/)
-- Course methodology: HKUDS/CLI-Anything (agent-native CLI design)
-- Paper references: THUDM GLM series (GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS etc.)
+- **Course source**: Prof. Jie Tang (唐杰) — *Advanced Machine Learning*, 2026-09-17 — [PPT collage](./docs/course-origin/tang-2026-09-17-aml-ppt-collage.jpg)
+- **Methodology**: HKUDS/CLI-Anything (agent-native CLI design)
+- **Paper references**: THUDM GLM series (GLM-4.5 / GLM-5 / slime / DeepDive / ReST-MCTS etc.)
