@@ -177,6 +177,11 @@ class BPETokenizer:
 
     # ------------------------------------------------------------------ encode
 
+    @property
+    def vocab_size(self) -> int:
+        """Current vocabulary size (matches from-scratch.char / .word)."""
+        return len(self.id_to_bytes)
+
     def encode(self, text: str, add_bos: bool = False, add_eos: bool = False) -> list[int]:
         ids: list[int] = []
         if add_bos:

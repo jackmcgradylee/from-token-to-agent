@@ -1,0 +1,77 @@
+{
+  "n_train_samples": 13,
+  "n_eval_samples": 5,
+  "bpe_vocab_size": 1024,
+  "vocab_sizes": {
+    "char": 260,
+    "word": 107,
+    "bpe": 306
+  },
+  "total_bytes": 272,
+  "total_tokens": {
+    "char": 272,
+    "word": 89,
+    "bpe": 239
+  },
+  "compression_bytes_per_token": {
+    "char": 1.0,
+    "word": 3.056179775280899,
+    "bpe": 1.1380753138075315
+  },
+  "total_unk": {
+    "word": 38,
+    "bpe": 0
+  },
+  "rows": [
+    {
+      "sample": "Cassiniophilina's zephyr-laden persiflage bewildered the quorum.",
+      "n_chars": 64,
+      "n_bytes": 64,
+      "char_tokens": 64,
+      "word_tokens": 16,
+      "bpe_tokens": 55,
+      "word_unk": 8,
+      "bpe_unk": 0
+    },
+    {
+      "sample": "Quixotry and rheumy bibliobibuli vexed the catachresis.",
+      "n_chars": 55,
+      "n_bytes": 55,
+      "char_tokens": 55,
+      "word_tokens": 14,
+      "bpe_tokens": 47,
+      "word_unk": 5,
+      "bpe_unk": 0
+    },
+    {
+      "sample": "嵚崟嶷魑魅魍魉孀嫠。",
+      "n_chars": 10,
+      "n_bytes": 30,
+      "char_tokens": 30,
+      "word_tokens": 10,
+      "bpe_tokens": 28,
+      "word_unk": 9,
+      "bpe_unk": 0
+    },
+    {
+      "sample": "Quantum 🎯 entanglement and 🧬 sequencing herald a new era.",
+      "n_chars": 57,
+      "n_bytes": 63,
+      "char_tokens": 63,
+      "word_tokens": 20,
+      "bpe_tokens": 53,
+      "word_unk": 8,
+      "bpe_unk": 0
+    },
+    {
+      "sample": "auto&& [this]() noexcept -> decltype(auto) { return *this; }",
+      "n_chars": 60,
+      "n_bytes": 60,
+      "char_tokens": 60,
+      "word_tokens": 29,
+      "bpe_tokens": 56,
+      "word_unk": 8,
+      "bpe_unk": 0
+    }
+  ]
+}
