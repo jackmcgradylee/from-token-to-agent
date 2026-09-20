@@ -50,7 +50,7 @@ HW1 status is **"W1 + W2 done; W3 in progress"**.
 | `tests/model/test_transformer.py` | 4 | Param-count breakdown, forward shape, RoPE effect. |
 | `tests/model/test_ablation.py` | 19 | RMSNorm vs LayerNorm params + GQA KV-cache shrinkage. |
 | `tests/kernels/test_attention.py` | 5 | Attention shape / KV cache / numerical sanity (CPU no-CUDA branch). |
-| **Total** | **59** | All pass on Jetson Nano (CPU-only). |
+| **Total** | **59** | All pass on the dev host (CPU-only). |
 
 ## Experiments
 
@@ -163,7 +163,7 @@ PYTHONPATH=. .venv/bin/python extensions/w01/ext-w1-01-bpe-vocab-sweep/runner.py
     --replicate 30 --targets 260,512,1024,2048,4096
 ```
 
-Total wall time on Jetson Nano CPU: < 30 s.
+Total wall time on the dev host CPU: < 30 s.
 
 ## Pass criteria (from `COURSE.md` §6 HW1)
 

@@ -24,7 +24,7 @@ loss floor `L_inf`. The textbook claims:
 
 The textbook claims are fit on **billions of parameters** and **trillions
 of tokens**, with hundreds of independent runs and proper convergence.
-We have a CPU-only Jetson Nano, a 1 MB toy corpus, and 100 training steps
+We have a CPU-only the dev host, a 1 MB toy corpus, and 100 training steps
 per pilot. None of those numbers matter at our scale. So what *can*
 this week's experiment say?
 

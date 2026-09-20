@@ -19,8 +19,8 @@ Outputs:
   - results/serving.md
   - results/serving.json
 
-Run on the Jetson (CPU) for scheduler-logic validation. For real
-vLLM numbers, see experiments/w05/README-JETSON-LIMITATIONS.md.
+Run on the dev host (CPU) for scheduler-logic validation. For real
+vLLM numbers, see experiments/w05/README-DEV-HOST-LIMITATIONS.md.
 """
 
 from __future__ import annotations
@@ -61,7 +61,7 @@ class SweepCell:
     seed: int
 
 
-# Default sweep grid. Keep small so the simulator runs in ~30s on Jetson.
+# Default sweep grid. Keep small so the simulator runs in ~30s on the dev host.
 # prompt_len + gen_len <= 4096 (Llama-2-7B max_seq_len).
 DEFAULT_GRID: list[SweepCell] = []
 for rps in [4.0, 16.0, 64.0]:
@@ -205,7 +205,7 @@ def main(grid: list[SweepCell] | None = None) -> None:
         f.write(f"Model: `llama2-7b` (32L, 32H, 32 KV, D=128, fp16)\n")
         f.write(f"Sim: discrete-event CPU simulator (`src/token_to_agent/systems/serving/simulated_engine.py`)\n")
         f.write(f"Decode TPS-per-seq: 50.0; prefill TPS: 8000; chunk: 256 tokens\n")
-        f.write(f"GPU KV budget: 60 GB (CPU sim only — see JETSON-LIMITATIONS for real GPU runs)\n")
+        f.write(f"GPU KV budget: 60 GB (CPU sim only — see DEV-HOST-LIMITATIONS for real GPU runs)\n")
         f.write(f"Cost reference: $2.00/hr H100 on-demand\n\n")
         f.write("## Sweep results\n\n")
         f.write("| rps | prompt | gen | n_completed | preempted | errors | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | E2E p95 (ms) | out TPS | $/1M in | $/1M out |\n")

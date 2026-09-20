@@ -1,4 +1,4 @@
-# HW1 toy config — small enough to train on Jetson CPU in <1 minute.
+# HW1 toy config — small enough to train on dev CPU in <1 minute.
 # Full baseline-100m config is configs/hw1/baseline-100m.yaml.
 
 # Model

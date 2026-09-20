@@ -158,7 +158,7 @@ python scripts/train.py --config configs/pretrain/toy-5m.yaml
 python scripts/train.py --config configs/pretrain/baseline-100m.yaml
 
 # W3 scaling pilot â€” 5 iso-data models + power-law hold-out prediction
-# (CPU-feasible; ~40 minutes on Jetson Nano)
+# (CPU-feasible; ~40 minutes on the dev host)
 bash scripts/run_w3_sweep.sh
 
 # Generate from a checkpoint
@@ -168,7 +168,7 @@ python scripts/generate.py --checkpoint artifacts/checkpoints/toy-5m --prompt "ä
 python scripts/benchmark.py attention --backend pytorch triton --seq-len 128 1024
 ```
 
-> Jetson Nano / CPU hosts are for development and smoke tests only. Production-baseline experiments need a GPU host.
+> the dev host / CPU hosts are for development and smoke tests only. Production-baseline experiments need a GPU host.
 
 ---
 

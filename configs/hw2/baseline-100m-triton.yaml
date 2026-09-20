@@ -1,5 +1,5 @@
 # HW2 baseline-100m config with Triton attention backend.
-# Requires CUDA + Triton. On Jetson / CPU, see baseline-100m-pytorch.yaml.
+# Requires CUDA + Triton. On CPU-only, see baseline-100m-pytorch.yaml.
 
 model:
   vocab_size: 8192

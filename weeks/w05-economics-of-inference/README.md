@@ -28,7 +28,7 @@ CPU and emits CSV / JSON / Markdown artifacts.
 
 **CUDA-required parts deferred.** Real vLLM / SGLang launch, real
 FlashAttention-2 decode step, real NCCL tensor-parallel serving — all
-gated behind a CUDA host. See `experiments/w05/README-JETSON-LIMITATIONS.md`.
+gated behind a CUDA host. See `experiments/w05/README-DEV-HOST-LIMITATIONS.md`.
 
 ## What was implemented
 
@@ -99,8 +99,7 @@ File: `experiments/w05/exp-003-serving-bench/runner.py`.
 
 3 (rps) × 3 (prompt_len) × 2 (gen_len) = 18 cells. Llama-2-7B,
 fp16, 60 GB KV budget. Reports TTFT/TPOT/E2E p50/p95, throughput,
-`$/1M-token`, completion/preemption/error counts. 1.6 s wall-clock on
-the Jetson.
+`$/1M-token`, completion/preemption/error counts. 1.6 s wall-clock on the dev host.
 
 ## Reproduction
 
@@ -179,7 +178,7 @@ Read carefully:
 - [x] Cost / 1M input tokens, cost / 1M output tokens, cost /
       successful task — all reported.
 - [ ] **CUDA-host vLLM / SGLang launch** (deferred to
-      `experiments/w05/README-JETSON-LIMITATIONS.md`).
+      `experiments/w05/README-DEV-HOST-LIMITATIONS.md`).
 - [ ] **Real FlashAttention-2 decode timing** (deferred; calibrated
       `decode_tps_per_seq` knob until a GPU box is available).
 
@@ -189,7 +188,7 @@ Read carefully:
   — W5 textbook deliverable.
 - [`experiments/w05/exp-003-serving-bench/results/serving.md`](../../experiments/w05/exp-003-serving-bench/results/serving.md)
   — sweep output table.
-- [`experiments/w05/README-JETSON-LIMITATIONS.md`](../../experiments/w05/README-JETSON-LIMITATIONS.md)
+- [`experiments/w05/README-DEV-HOST-LIMITATIONS.md`](../../experiments/w05/README-DEV-HOST-LIMITATIONS.md)
   — what is gated on CUDA + how to run it.
 - [`assignments/hw2-systems/README.md`](../../assignments/hw2-systems/README.md)
   — HW2 views W4 + W5 together as the systems submission.

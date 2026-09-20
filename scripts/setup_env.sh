@@ -23,7 +23,7 @@ fi
 .venv/bin/python -m ensurepip --upgrade >/dev/null 2>&1 || true
 
 # CPU-only torch + minimal deps. --only-binary=:all: forces wheels
-# (avoids source-build / cmake failures on Jetson / constrained Linux).
+# (avoids source-build / cmake failures on the dev host / constrained Linux).
 .venv/bin/python -m pip install --upgrade --only-binary=:all: pip setuptools wheel
 .venv/bin/python -m pip install --only-binary=:all: torch pyyaml pandas matplotlib numpy
 

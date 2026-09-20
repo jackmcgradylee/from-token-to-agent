@@ -3,7 +3,7 @@
 Model: `llama2-7b` (32L, 32H, 32 KV, D=128, fp16)
 Sim: discrete-event CPU simulator (`src/token_to_agent/systems/serving/simulated_engine.py`)
 Decode TPS-per-seq: 50.0; prefill TPS: 8000; chunk: 256 tokens
-GPU KV budget: 60 GB (CPU sim only — see JETSON-LIMITATIONS for real GPU runs)
+GPU KV budget: 60 GB (CPU sim only — see DEV-HOST-LIMITATIONS for real GPU runs)
 Cost reference: $2.00/hr H100 on-demand
 
 ## Sweep results

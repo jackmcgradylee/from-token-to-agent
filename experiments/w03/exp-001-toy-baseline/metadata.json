@@ -50,7 +50,7 @@
   },
   "seed": 42,
   "hardware": {
-    "host": "Jetson Nano",
+    "host": "the dev host",
     "cpu": "ARMv8",
     "gpu": "none",
     "memory_gb": 3.9

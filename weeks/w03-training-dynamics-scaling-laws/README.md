@@ -126,7 +126,7 @@ See [`experiments/w03/exp-007-scaling-law-fit/results/fit.md`](../../experiments
 # 0. (one-time) generate the 1 MB toy corpus.
 PYTHONPATH=. .venv/bin/python scripts/make_sample_corpus.py
 
-# 1. Run all five pilots (CPU, ~40 minutes total on Jetson Nano).
+# 1. Run all five pilots (CPU, ~40 minutes total on the dev host).
 for cfg in 1m 2_5m 5m 10m 20m; do
     PYTHONPATH=. .venv/bin/python experiments/w03/exp-002-scaling-pilot-1m/runner.py &
     PYTHONPATH=. .venv/bin/python experiments/w03/exp-003-scaling-pilot-2_5m/runner.py &
@@ -140,7 +140,7 @@ done
 PYTHONPATH=. .venv/bin/python experiments/w03/exp-007-scaling-law-fit/runner.py
 ```
 
-(Pilots must be run **sequentially** on the Jetson because they each
+(Pilots must be run **sequentially** on the dev host because they each
 use ~1.5 GB of RAM; running them in parallel will OOM.)
 
 ## What I learned

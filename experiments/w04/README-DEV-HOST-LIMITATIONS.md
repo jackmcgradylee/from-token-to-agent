@@ -1,4 +1,4 @@
-# W4 — Jetson / CPU-only limitations
+# W4 — CPU-only host limitations
 
 This file lists every W4 deliverable that **requires CUDA / Triton /
 NCCL**, and explains what the CPU-runnable counterpart does instead.
@@ -34,7 +34,7 @@ The CSV / Markdown / PNG outputs produced today are
 
 COURSE.md §九 W4 says "至少跑一次真实 Multi-GPU 实验。可以使用
 PyTorch DDP / FSDP / Megatron。" — this requires real multi-GPU, which
-a Jetson cannot. We satisfy the *spirit* of the requirement by:
+a CPU-only host cannot. We satisfy the *spirit* of the requirement by:
 
 1. Writing the wrapper code (`ddp_reference.py`, `fsdp_smoke.py`).
 2. Documenting the launch command.
@@ -45,13 +45,13 @@ a Jetson cannot. We satisfy the *spirit* of the requirement by:
 
 The actual GPU run is deferred to whichever environment the user
 next has available. We do not modify the course requirements to
-accommodate the Jetson constraint (per the project's "don't relax
+accommodate the dev-host constraint (per the project's "don't relax
 the rules" principle); we just leave the implementation complete
 and the empirical validation gated.
 
 ## File-by-file status
 
-| Path | Status on Jetson |
+| Path | Status on the dev host |
 |---|---|
 | `src/token_to_agent/from_scratch/kernels/triton_attention.py` | Forward kernel compiles only when CUDA + Triton present; module is importable but `is_available()` returns False. |
 | `src/token_to_agent/from_scratch/kernels/reference_attention.py` | Fully CPU-runnable; all unit tests pass. |

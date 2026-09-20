@@ -169,7 +169,7 @@ python scripts/generate.py --checkpoint artifacts/checkpoints/toy-5m --prompt "�
 python scripts/benchmark.py attention --backend pytorch triton --seq-len 128 1024
 ```
 
-> Jetson Nano / CPU 环境仅适合开发与 smoke test；正式 baseline 实验需要在带 GPU 的机器上运行。
+> the dev host / CPU 环境仅适合开发与 smoke test；正式 baseline 实验需要在带 GPU 的机器上运行。
 
 ---
 

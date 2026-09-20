@@ -18,7 +18,7 @@ benchmark output so the user can see what the autotuner picked.
 
 Hardware requirements:
   - CUDA (this file won't import triton successfully on CPU; triton_attention.py
-    is gated on `import triton` succeeding. On Jetson this file is never
+    is gated on `import triton` succeeding. on the dev host this file is never
     imported — `attention.py` falls back to `reference_attention.py` via the
     backend interface).
   - bf16 / fp16 / fp32 supported (template-typed).
@@ -29,7 +29,7 @@ from __future__ import annotations
 import torch
 
 # Triton is optional. We import lazily inside forward() so the module file is
-# importable on machines without CUDA (Jetson, macOS, etc.).
+# importable on machines without CUDA (the dev host, macOS, etc.).
 try:
     import triton  # type: ignore
     import triton.language as tl  # type: ignore

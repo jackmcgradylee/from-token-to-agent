@@ -297,7 +297,7 @@ without actually serving tokens.
 
 ## 7. Why this is CPU-runnable (and what isn't)
 
-`experiments/w05/README-JETSON-LIMITATIONS.md` lists every CUDA-gated
+`experiments/w05/README-DEV-HOST-LIMITATIONS.md` lists every CUDA-gated
 deliverable. The short version:
 
 - **CPU-runnable**: load generator, metrics collector, KV cache math,
@@ -336,5 +336,5 @@ Together they answer **How Fast?** (W4 TPS) and **How Expensive?**
 - Speculative decoding with a draft model (e.g. Llama-2-7B + TinyLlama).
 - Production trace replay (Azure LLM serving trace, MOSAICML trace).
 
-See `experiments/w05/README-JETSON-LIMITATIONS.md` for the exact
+See `experiments/w05/README-DEV-HOST-LIMITATIONS.md` for the exact
 launch commands.

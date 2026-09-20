@@ -59,7 +59,7 @@ def render_markdown(results: list, summary: dict) -> str:
     lines.append(f"- **Forward latency**: RMSNorm {rms['forward_latency_ms']:.2f} ms, "
                  f"LayerNorm {ln['forward_latency_ms']:.2f} ms. RMSNorm removes the mean "
                  "computation and the bias term — strictly fewer FLOPs per call. On "
-                 "this Jetson / CPU host (no fused norm kernel) the two are within run-to-run "
+                 "this CPU-only host (no fused norm kernel) the two are within run-to-run "
                  "noise, but on GPU with fused kernels RMSNorm wins by ~10-20% "
                  "(see LLaMA inference benchmarks).")
     lines.append(f"- **Training**: both variants start at log(V)≈{summary['log_vocab']:.2f} "

@@ -1,7 +1,7 @@
 """W3 scaling-pilot: 20M-class model (~33.4M actual params).
 
 This is the biggest CPU-tolerable point in the W3 sweep. Expect ~10 min
-wall time on Jetson Nano.
+wall time on the dev host.
 
 Run:
     PYTHONPATH=. .venv/bin/python experiments/w03/exp-006-scaling-pilot-20m/runner.py

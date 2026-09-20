@@ -31,7 +31,7 @@ many FLOPs per byte the chip can sustain":
 |---|---:|
 | A100 | ~1500 |
 | H100 | ~2500 |
-| Jetson Nano (CPU only) | irrelevant; ~1 |
+| the dev host (CPU only) | irrelevant; ~1 |
 
 If your kernel's AI < hardware peak, you're **bandwidth-bound** and
 the kernel is memory-limited; if AI > peak, you're **compute-bound**
@@ -197,4 +197,4 @@ real one).
 - KV-cache benchmarking (W5 territory but the kernel would benefit).
 
 These are scoped but deferred — see
-`experiments/w04/README-JETSON-LIMITATIONS.md`.
+`experiments/w04/README-DEV-HOST-LIMITATIONS.md`.

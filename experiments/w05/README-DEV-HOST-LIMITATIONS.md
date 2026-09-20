@@ -1,4 +1,4 @@
-# W5 — Jetson / CPU-only limitations
+# W5 — CPU-only host limitations
 
 The CPU simulator (`src/token_to_agent/systems/serving/simulated_engine.py`)
 validates scheduler logic, KV-cache math, and admission policy on any
@@ -7,7 +7,7 @@ host. It does **not** validate absolute latency / throughput / cost.
 This file lists every W5 deliverable that **requires a CUDA host with
 vLLM or SGLang**, and explains the CPU equivalent and the gap.
 
-## What is real on Jetson
+## What is real on the dev host
 
 | Deliverable | Source | What it actually proves |
 |---|---|---|
@@ -95,13 +95,13 @@ We satisfy the *spirit* of the requirements by:
 
 The actual GPU run is deferred to whichever environment the user
 next has available. We do not modify the course requirements to
-accommodate the Jetson constraint (per the project's "don't relax
+accommodate the dev host constraint (per the project's "don't relax
 the rules" principle); we just leave the implementation complete
 and the empirical validation gated.
 
 ## File-by-file status
 
-| Path | Status on Jetson |
+| Path | Status on the dev host |
 |---|---|
 | `src/token_to_agent/systems/serving/load_generator.py` | Fully CPU-runnable; deterministic. |
 | `src/token_to_agent/systems/serving/metrics_collector.py` | Fully CPU-runnable. |

@@ -202,7 +202,7 @@ def cost_per_million_tokens(
 
 
 # ---------------------------------------------------------------------------
-# Reference numbers used by the docs and the JETSON-LIMITATIONS file
+# Reference numbers used by the docs and the DEV-HOST-LIMITATIONS file
 # ---------------------------------------------------------------------------
 
 # Per docs/w5 §3: Llama-2-7B fp16 T=4096 → 128 KB/token, 512 MB/req.

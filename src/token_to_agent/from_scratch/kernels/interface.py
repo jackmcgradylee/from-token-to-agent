@@ -50,7 +50,7 @@ def _probe_triton() -> AttentionBackend:
             return AttentionBackend(
                 name="triton",
                 available=False,
-                reason="CUDA not available (Jetson / CPU-only host). Falling back to reference.",
+                reason="CUDA not available (CPU-only host). Falling back to reference.",
             )
         return AttentionBackend(
             name="triton",

@@ -7,7 +7,7 @@
   "created": "2026-09-17",
   "updated": "2026-09-17",
   "tags": ["tokenization", "bpe", "ablation", "vocab-size", "saturation"],
-  "hardware": "CPU-only (Jetson Nano, no CUDA)",
+  "hardware": "CPU-only (the dev host, no CUDA)",
   "hypothesis": "bytes/token grows sublinearly with vocab; once merges are saturated, more target vocab buys no compression.",
   "method": {
     "tokenizer": "src/token_to_agent/from_scratch/tokenizer/bpe.py:BPETokenizer (byte-level, min_pair_freq=2)",

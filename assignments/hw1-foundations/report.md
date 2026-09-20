@@ -34,7 +34,7 @@ See the three week folders:
 | Compression | 2.72 bytes/token |
 | Train loss | 6.43 → 2.27 |
 | Val loss | 2.26 |
-| Tokens/sec | 329 (Jetson CPU) |
+| Tokens/sec | 329 (dev CPU) |
 | Peak memory | 1.4 GB |
 | Wall time | 292.6 s |
 

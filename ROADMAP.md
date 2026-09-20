@@ -72,7 +72,7 @@ For a homework (HW1–HW4, Final) to be tagged, all of:
 
 ## Current known limitations
 
-- **No GPU on the dev host** (Jetson Nano). Triton kernels and CUDA-only paths fall back to `reference_attention.py` at runtime with a logged warning; numerical correctness tests still pass.
+- **No GPU on the dev host** (the dev host). Triton kernels and CUDA-only paths fall back to `reference_attention.py` at runtime with a logged warning; numerical correctness tests still pass.
 - **HW1 / HW2 evidence is "smoke only"** — toy-scale runs that confirm the pipeline works end-to-end, not the full W3 scaling pilot or the full W4 multi-GPU benchmark.
 - **W1 char / word tokenizer not yet implemented** — only BPE exists in `src/token_to_agent/tokenizer/bpe.py`. The W1 cross-comparison requires the other two tokenizers; this is the next concrete step.
 - **HW1 report and HW2 report were rewritten into `weeks/` view** during the 2026-09-17 restructure. Previous toy numbers preserved under `experiments/w03/exp-001-toy-baseline/` and `experiments/w04/exp-001-triton-vs-pytorch-vs-reference/`.

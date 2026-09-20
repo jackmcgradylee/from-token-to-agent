@@ -7,7 +7,7 @@ status: complete
 created: 2026-09-17
 updated: 2026-09-17
 tags: [tokenization, bpe, ablation, vocab-size, saturation]
-hardware: CPU-only (no CUDA on Jetson Nano, irrelevant to this sweep)
+hardware: CPU-only (no CUDA on the dev host, irrelevant to this sweep)
 ---
 
 # EXT-W1-01 — BPE Vocab Size Sweep
@@ -72,7 +72,7 @@ bug that originally produced `bytes_per_token = 0.000`). Section markers
 
 ## 4. Experimental setup
 
-- **Hardware**: CPU only (Jetson Nano, no CUDA). This is a tokenizer sweep,
+- **Hardware**: CPU only (the dev host, no CUDA). This is a tokenizer sweep,
   not a model training run — CPU is the right tool.
 - **Software**: Python 3.11 + `dataclasses`. No external deps.
 - **Randomness**: deterministic — BPE merge order is fully determined by the

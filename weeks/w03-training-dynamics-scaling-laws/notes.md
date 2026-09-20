@@ -44,4 +44,4 @@ For transformer LMs, Kaplan et al. (2020) and Chinchilla (Hoffmann et al. 2022) 
 ## Open questions
 
 - For the W3 pilot, should we hold data fixed and vary model, or vary both? The course brief says W3 is **model-side** scaling (data fixed); HW3 (W6–W7) is the data × model 2D scaling.
-- What loss target is "converged enough" for the pilot? Textbook 0.1B models on TinyStories reach ~2.0 val loss at ~5B tokens. We don't have 5B tokens on Jetson.
+- What loss target is "converged enough" for the pilot? Textbook 0.1B models on TinyStories reach ~2.0 val loss at ~5B tokens. We don't have 5B tokens on the dev host.

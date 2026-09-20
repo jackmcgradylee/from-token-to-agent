@@ -18,11 +18,11 @@ See the two week folders:
 
 ## 4. Experimental setup
 
-- **Hardware (smoke):** Jetson Nano, ARMv8, 3.9 GB RAM, no CUDA.
+- **Hardware (smoke):** the dev host, ARMv8, 3.9 GB RAM, no CUDA.
 - **Shape:** `(B, H=12, H_kv=4, T, D=64)` — the attention math layer of baseline-100m.
 - **Backends:** reference (pure-PyTorch, oracle), pytorch (F.scaled_dot_product_attention), triton (custom Flash-Attention-2 forward kernel).
 
-## 5. Results (smoke only — Jetson CPU fp32)
+## 5. Results (smoke only — dev CPU fp32)
 
 | B | T | reference (ms) | pytorch (ms) | speedup | max abs err |
 |---:|---:|---:|---:|---:|---:|
@@ -33,7 +33,7 @@ See the two week folders:
 | 4 | 128 | 28.975 | 19.818 | **1.46×** | 1.34e-7 |
 | 4 | 256 | 83.408 | 49.585 | **1.68×** | 1.34e-7 |
 
-Triton row **skipped** on Jetson (no CUDA). GPU-box numbers pending.
+Triton row **skipped** on the dev host (no CUDA). GPU-box numbers pending.
 
 ## 6. Analysis (preliminary)
 

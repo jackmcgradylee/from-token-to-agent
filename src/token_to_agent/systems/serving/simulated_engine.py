@@ -26,7 +26,7 @@ What it does NOT model:
 
 The point is to validate the *scheduler logic* and *KV cache math*
 on CPU. Absolute throughput / cost numbers are deferred to a CUDA
-host (see experiments/w05/README-JETSON-LIMITATIONS.md).
+host (see experiments/w05/README-DEV-HOST-LIMITATIONS.md).
 """
 
 from __future__ import annotations

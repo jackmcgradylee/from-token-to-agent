@@ -64,7 +64,7 @@ def render_markdown(results: list, summary: dict) -> str:
                  "KV cache scales linearly with n_kv_heads/n_heads.")
     lines.append(f"- **Forward latency**: MHA {mha['forward_latency_ms']:.2f} ms vs "
              f"GQA-{summary['n_kv_small']} {gqa_small['forward_latency_ms']:.2f} ms. On "
-             "this Jetson / CPU host the per-token compute saved by GQA is dwarfed by "
+             "this CPU-only host the per-token compute saved by GQA is dwarfed by "
              "kernel launch / memory-access costs, so latencies are within run-to-run "
              "noise. On GPU serving stacks, the KV-cache shrinkage directly translates "
              "to higher batch sizes and lower memory pressure — which is where GQA's "

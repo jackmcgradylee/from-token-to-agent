@@ -29,7 +29,7 @@ reference) and produce CSV/PNG outputs.
 
 **CUDA-required parts deferred.** Real FlashAttention-style speedups,
 FSDP launches, NCCL all-reduce — all gated behind CUDA. See
-`experiments/w04/README-JETSON-LIMITATIONS.md`.
+`experiments/w04/README-DEV-HOST-LIMITATIONS.md`.
 
 ## What was implemented
 
@@ -161,12 +161,12 @@ PYTHONPATH=. torchrun --standalone --nproc_per_node=4 \
 - [x] Multi-GPU wrapper code present (DDP + FSDP smoke scripts) —
       execution gated on CUDA host.
 - [ ] **CUDA-host multi-GPU run** (deferred to `experiments/w04/
-      README-JETSON-LIMITATIONS.md`).
+      README-DEV-HOST-LIMITATIONS.md`).
 
 ## See also
 
 - [`docs/w4-kernels.md`](../../docs/w4-kernels.md) — W4 textbook deliverable.
 - [`experiments/w04/exp-001-attn-bench/results/bench.md`](../../experiments/w04/exp-001-attn-bench/results/bench.md)
 - [`experiments/w04/exp-002-attn-seqlen/results/seqlen.md`](../../experiments/w04/exp-002-attn-seqlen/results/seqlen.md)
-- [`experiments/w04/README-JETSON-LIMITATIONS.md`](../../experiments/w04/README-JETSON-LIMITATIONS.md)
+- [`experiments/w04/README-DEV-HOST-LIMITATIONS.md`](../../experiments/w04/README-DEV-HOST-LIMITATIONS.md)
 - [`assignments/hw2-systems/README.md`](../../assignments/hw2-systems/README.md) — HW2 views W4.

@@ -9,7 +9,7 @@ Why a separate file:
     small inputs that both can run.
   - Benchmark numbers reported in HW2 use this implementation as the
     "PyTorch baseline" row.
-  - On machines without CUDA (e.g., this Jetson), this is the only path
+  - On machines without CUDA (e.g., this dev host), this is the only path
     that runs.
 
 Supports:

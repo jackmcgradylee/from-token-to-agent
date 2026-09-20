@@ -7,7 +7,7 @@ configurable (B, H, H_kv, T, D).
 Hardware notes:
   - On a CUDA host, all four backends run; Triton row reports the real
     FlashAttention-style speedup vs SDPA / naive.
-  - On a CUDA-less host (this Jetson), the triton row falls back to
+  - On a CUDA-less host (this dev host), the triton row falls back to
     `reference` via `interface.call`, and timing numbers are reported
     with a `cuda_available=False` flag. The harness still produces a CSV
     with `forward_ms` / `fwd_bwd_ms` / `peak_mem_mb` rows so the artifact

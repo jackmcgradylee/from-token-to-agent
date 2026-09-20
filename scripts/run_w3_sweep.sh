@@ -9,7 +9,7 @@
 #   4. Render scaling_curve.png + fit.md + fit.json under
 #      experiments/w03/exp-007-scaling-law-fit/results/
 #
-# Wall time on Jetson Nano CPU: ~40 minutes for the sweep + ~1 s for the fit.
+# Wall time on the dev host CPU: ~40 minutes for the sweep + ~1 s for the fit.
 #
 # Usage:
 #   bash scripts/run_w3_sweep.sh

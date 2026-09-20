@@ -1,7 +1,7 @@
 # W3 scaling-pilot: 20M-class model (target N ≈ 33.4M actual).
 # NOTE: this is the biggest CPU-tolerable point in the sweep.
 #       d_model=320 / 28 layers puts peak RAM around ~2.5 GB.
-#       On Jetson Nano (~3.9 GB usable) it trains in ~10 minutes.
+#       On the dev host (~3.9 GB usable) it trains in ~10 minutes.
 
 model:
   vocab_size: 2048

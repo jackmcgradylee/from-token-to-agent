@@ -5,7 +5,7 @@
   "parent_hw": "HW2",
   "started": "2026-09-17",
   "status": "complete",
-  "purpose": "Forward-only attention benchmark across three backends on Jetson CPU fp32. Establishes the reference / pytorch (cuDNN/SDPA) / triton comparison for the W4 deliverable. Triton row is SKIPPED on Jetson (no CUDA); must be re-run on a GPU box.",
+  "purpose": "Forward-only attention benchmark across three backends on dev CPU fp32. Establishes the reference / pytorch (cuDNN/SDPA) / triton comparison for the W4 deliverable. Triton row is SKIPPED on the dev host (no CUDA); must be re-run on a GPU box.",
   "git_commit_at_creation": "6c8eaa8",
   "config": "configs/systems/baseline-100m-pytorch.yaml (attention section: H=12, H_kv=4, D=64)",
   "shape": {
@@ -17,7 +17,7 @@
   },
   "data": "synthetic random tensors (torch.randn)",
   "hardware": {
-    "host": "Jetson Nano",
+    "host": "the dev host",
     "cpu": "ARMv8",
     "gpu": "none"
   },

@@ -38,7 +38,7 @@ The behaviour-preserving systems switches live **inside** the model:
 ### Kernels (`from_scratch/kernels/`)
 
 - `reference_attention.py` — naive O(n²) python-loop reference (numerical ground truth).
-- `triton_attention.py` — Triton flash-attention-style kernel. On Jetson Nano (no CUDA) this path is **skipped at import time** and tests verify it via `torch.no_grad` fallback.
+- `triton_attention.py` — Triton flash-attention-style kernel. On the dev host (no CUDA) this path is **skipped at import time** and tests verify it via `torch.no_grad` fallback.
 - `interface.py` — `attn_backend` dispatcher that picks Triton when CUDA is available and PyTorch SDPA otherwise.
 
 ### Tests (`tests/`)
@@ -107,7 +107,7 @@ make sure the hooks exist on a CPU machine.
 ## Reproduction
 
 ```bash
-# 1. Kernel tests (Triton path is CUDA-skipped on Jetson Nano)
+# 1. Kernel tests (Triton path is CUDA-skipped on the dev host)
 PYTHONPATH=. .venv/bin/python tests/kernels/test_attention.py
 
 # 2. Ablation tests (RMSNorm / GQA)

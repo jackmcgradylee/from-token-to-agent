@@ -16,7 +16,7 @@ KV cache size is computed per-layer at B=4, T=512, fp32.
 
 - **Param delta**: MHA 557,696 → GQA-1 508,544 (saved 49,152 params, 8.8%). The savings come from shrinking K and V projections only — Q and O stay at full size.
 - **KV cache delta**: MHA 2,097,152 → GQA-1 524,288 (ratio 0.25). KV cache scales linearly with n_kv_heads/n_heads.
-- **Forward latency**: MHA 18.08 ms vs GQA-1 26.14 ms. On this Jetson / CPU host the per-token compute saved by GQA is dwarfed by kernel launch / memory-access costs, so latencies are within run-to-run noise. On GPU serving stacks, the KV-cache shrinkage directly translates to higher batch sizes and lower memory pressure — which is where GQA's real production win is.
+- **Forward latency**: MHA 18.08 ms vs GQA-1 26.14 ms. On this CPU-only host the per-token compute saved by GQA is dwarfed by kernel launch / memory-access costs, so latencies are within run-to-run noise. On GPU serving stacks, the KV-cache shrinkage directly translates to higher batch sizes and lower memory pressure — which is where GQA's real production win is.
 - **Training**: all variants reach similar final loss (range 6.972-6.990), showing GQA preserves training quality at the cost we paid for. This is the empirical basis for using GQA in modern serving stacks (LLaMA-2/3, Mistral).
 
 ## Files
